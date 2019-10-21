@@ -55,6 +55,7 @@ L["SalvRemovalDisabled"] = "[BBT] Salvation removal disabled!"
 L["SalvBuffName"] = "Blessing of Salvation"
 
 -- Warnings
+L["AnnouncementSetup"] = "Announcement Setup"
 L["WarningSettings"] = "Warning Settings"
 L["WarningSettingsDescription"] = [[
 Control whether and how warnings should be shown.
@@ -66,18 +67,23 @@ L["EnableBBTWarningsExpiration"] = "Enable expiration warnings"
 L["EnableBBTWarningsExpirationDescription"] = "Enables or disables expiration warning announcements about shield wall and last stand."
 
 
-L["Last Stand"] = "Last Stand"
-L["Shield Wall"] = "Shield Wall"
-L["Challenging Shout"] = "Challenging Shout"
-L["Taunt"] = "Taunt"
-L["Mocking Blow"] = "Mocking Blow"
-L["Challenging Roar"] = "Challenging Roar"
-L["Growl"] = "Growl"
+L["ABILITY_LASTSTAND"] = "Last Stand"
+L["ABILITY_SHIELDWALL"] = "Shield Wall"
+L["ABILITY_CHALLENGINGSHOUT"] = "Challenging Shout"
+L["ABILITY_TAUNT"] = "Taunt"
+L["ABILITY_MOCKINGBLOW"] = "Mocking Blow"
+L["ABILITY_CHALLENGINGROAR"] = "Challenging Roar"
+L["ABILITY_GROWL"] = "Growl"
 
-L["%s activated!"] = "%s activated!"
-L["%s will expire in 3 seconds!"] = "%s will expire in 3 seconds!"
+--- Interrupts
+L["ABILITY_SHIELDBASH"] = "Shield Bash"
+L["ABILITY_PUMMEL"] = "Pummel"
 
-L["Lifegiving Gem"] = "Lifegiving Gem"
-L["Shield Bash"] = "Shield Bash"
-L["Pummel"] = "Pummel"
-L["AnnouncementSetup"] = "Announcement Setup"
+--- Items
+L["ITEM_LIFEGIVINGGEM"] = "Lifegiving Gem"
+
+--- Statuses
+L["ABILITY_ACTIVATED"] = "%s activated!"
+L["ABILITY_RESISTED"] = "%s resisted!"
+L["ABILITY_EXPIRATION"] = "%s will expire in %s seconds!"
+

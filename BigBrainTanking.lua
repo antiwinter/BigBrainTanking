@@ -13,6 +13,10 @@ BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "Ace
 BBT.Version = GetAddOnMetadata(addonName, 'Version')
 BBT.Author = GetAddOnMetadata(addonName, "Author") 
 
+BBT.AnnouncementChannels = {
+	"say", "yell", "party", "raid", "raid_warning" 
+}
+
 BBT.Options = {
 	name = L["BigBrainTanking"],
 	type = "group",
@@ -201,39 +205,39 @@ local Default_Profile = {
 			AnnounceExpirations  = true,
 			Abilities = {
 				Warrior = {
-					[L["Last Stand"]] = { "Interface\\Icons\\Spell_Holy_AshesToAshes", 
+					[L["ABILITY_LASTSTAND"]] = { "Interface\\Icons\\Spell_Holy_AshesToAshes", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 					
 					},
-					[L["Shield Wall"]] = { "Interface\\Icons\\Ability_Warrior_ShieldWall", 
+					[L["ABILITY_SHIELDWALL"]] = { "Interface\\Icons\\Ability_Warrior_ShieldWall", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
 					},
-					[L["Challenging Shout"]] = { "Interface\\Icons\\Ability_BullRush", 
+					[L["ABILITY_CHALLENGINGSHOUT"]] = { "Interface\\Icons\\Ability_BullRush", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
 					},
-					[L["Taunt"]] = { "Interface\\Icons\\Spell_Nature_Reincarnation", 
+					[L["ABILITY_TAUNT"]] = { "Interface\\Icons\\Spell_Nature_Reincarnation", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
 					},
-					[L["Mocking Blow"]] = { "Interface\\Icons\\Ability_Warrior_PunishingBlow", 
+					[L["ABILITY_MOCKINGBLOW"]] = { "Interface\\Icons\\Ability_Warrior_PunishingBlow", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
 					},
-					[L["Shield Bash"]] = { "Interface\\Icons\\ability_warrior_shieldbash", 
+					[L["ABILITY_SHIELDBASH"]] = { "Interface\\Icons\\ability_warrior_shieldbash", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid" } }  
 					},
-					[L["Pummel"]] = { "Interface\\Icons\\inv_gauntlets_04", 
+					[L["ABILITY_PUMMEL"]] = { "Interface\\Icons\\inv_gauntlets_04", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid" } }  
 					},
 				},
 				Druid = {
-					[L["Challenging Roar"]] = { "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
+					[L["ABILITY_CHALLENGINGROAR"]] = { "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
 					},
-					[L["Growl"]] = { "Interface\\Icons\\Ability_Physical_Taunt", 
+					[L["ABILITY_GROWL"]] = { "Interface\\Icons\\Ability_Physical_Taunt", 
 					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
 					},
 				}			
 			},
 			Items = {
-				[L["Lifegiving Gem"]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
+				[L["ITEM_LIFEGIVINGGEM]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
 				{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  
 				},
 			}
@@ -266,25 +270,6 @@ function BBT:RegisterModuleOptions(name, optionTbl, displayName)
 	BBT.Options.args[name] = (type(optionTbl) == "function") and optionTbl() or optionTbl
 	self.OptionsFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BigBrainTanking", displayName, L["BBT Option"], name)
 end
-
---[[
-function BBT:GetXXX(keys) 
-	for key, value in pairs(keys) do
-		self:Print("key: " .. key .. " | value: " .. value)
-	end
-
-	presenceType = keys[#keys].name -- Alone/Party/Raid
-	keyName = keys[#keys-1].name -- Pummel/Life Giving Gem/etc
-	
-	self:Print("presenceType: " .. presenceType .. " | keyName: " .. keyName)
-	
-	return true
-end
---]]
-
-BBT.AnnouncementChannels = {
-	"say", "yell", "party", "raid", "raid_warning" 
-}
 
 function BBT:FindActiveChannelIndex(ability, presence, channel) 
 	local ActiveChannels = (((BBT.db.profile.Warnings.Abilities.Warrior[ability])[2])[presence])
@@ -547,8 +532,8 @@ function BBT:OnCombatLogEventUnfiltered()
 		
 		if subevent == "SPELL_CAST_SUCCESS" then
 			--Casts with critical expirations
-			if spellName == L["Last Stand"] or spellName == L["Shield Wall"] then
-				self:SendWarningMessage(string.format(L["%s activated!"], spellName), spellName)
+			if spellName == L["ABILITY_LASTSTAND"] or spellName == L["ABILITY_SHIELDWALL"] then
+				self:SendWarningMessage(string.format(L["ABILITY_ACTIVATED"], spellName), spellName)
 				if self:IsWarningExpirationsEnabled() then
 				-- find buff, get its duration and set up a timer
 					local counter = 1
@@ -558,9 +543,10 @@ function BBT:OnCombatLogEventUnfiltered()
 						local buffDuration = unitBuff[5]
 						
 						if name == spellName then
-							C_Timer.After(buffDuration - 3, function()
+							local timeToWarn = 3 -- Seconds before expiration
+							C_Timer.After(buffDuration - timeToWarn, function()
 									if UnitIsDeadOrGhost("player") ~= true then
-										self:SendWarningMessage(string.format(L["%s will expire in 3 seconds!"], spellName), spellName)
+										self:SendWarningMessage(string.format(L["ABILITY_EXPIRATION"], spellName, timeToWarn), spellName)
 									end
 								end)
 							break
@@ -569,14 +555,14 @@ function BBT:OnCombatLogEventUnfiltered()
 					end
 				end
 			--Casts without critical expirations
-			elseif spellName == L["Challenging Shout"] or spellName == L["Challenging Roar"] then
-				self:SendWarningMessage(string.format(L["%s activated!"], spellName), spellName)
+			elseif spellName == L["ABILITY_CHALLENGINGSHOUT"] or spellName == L["ABILITY_CHALLENGINGROAR"] then
+				self:SendWarningMessage(string.format(L["ABILITY_ACTIVATED"], spellName), spellName)
 			end
 		--Failures
 		elseif subevent == "SPELL_MISSED" then		
 			--We COULD look for the 15th argument of ... here for the type, but we'll just declare any miss as "resisted"
-			if spellName == L["Taunt"] or spellName == L["Mocking Blow"] or spellName == L["Growl"] then
-				self:SendWarningMessage(string.format(L["%s resisted!"], spellName), spellName)
+			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_MOCKINGBLOW"] or spellName == L["ABILITY_GROWL"] then
+				self:SendWarningMessage(string.format(L["ABILITY_RESISTED"], spellName), spellName)
 			end
 		end
 	end
