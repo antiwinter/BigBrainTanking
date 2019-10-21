@@ -299,6 +299,27 @@ function BBT:SetAnnouncementActive(ability, presence, channel, state)
 	
 end
 
+function GetAnnouncementSetting(keys, index) 
+	presenceType = keys[#keys] -- Alone/Party/Raid
+	keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
+	
+	--self:Print("presenceType: " .. keys[#keys] .. " | keyName: " .. keyName .. " | index: " .. index)
+	
+	local ChannelCheckbox = BBT.AnnouncementChannels[index]
+	--self:Print("channelCheckbox: " .. ChannelCheckbox)
+
+	return BBT:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
+end
+
+function SetAnnouncementSetting(keys, index, state)
+	presenceType = keys[#keys] -- Alone/Party/Raid
+	keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
+	
+	local ChannelCheckbox = BBT.AnnouncementChannels[index]
+	--self:Print("channelCheckbox: " .. ChannelCheckbox)
+	
+	BBT:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
+end
 
 function BBT:GenerateAnnounceSettings(itemTable) 
 	local AnnounceSettingsTable = {}
@@ -318,27 +339,8 @@ function BBT:GenerateAnnounceSettings(itemTable)
 					order = 1,
 					tristate = false,
 					values = BBT.AnnouncementChannels,
-					get = function(keys, index) 
-						presenceType = keys[#keys] -- Alone/Party/Raid
-						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
-						
-						--self:Print("presenceType: " .. keys[#keys] .. " | keyName: " .. keyName .. " | index: " .. index)
-						
-						local ChannelCheckbox = BBT.AnnouncementChannels[index]
-						--self:Print("channelCheckbox: " .. ChannelCheckbox)
-					
-						return self:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
-					end,
-					
-					set = function(keys, index, state)
-						presenceType = keys[#keys] -- Alone/Party/Raid
-						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
-						
-						local ChannelCheckbox = BBT.AnnouncementChannels[index]
-						--self:Print("channelCheckbox: " .. ChannelCheckbox)
-						
-						self:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
-					end,
+					get = GetAnnouncementSetting,
+					set = SetAnnouncementSetting,
 				},
 				Party = { 
 					name = "Party",
@@ -346,26 +348,8 @@ function BBT:GenerateAnnounceSettings(itemTable)
 					order = 2,
 					tristate = false,
 					values = BBT.AnnouncementChannels,
-					get = function(keys, index) 
-						presenceType = keys[#keys] -- Alone/Party/Raid
-						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
-						
-						--self:Print("presenceType: " .. keys[#keys] .. " | keyName: " .. keyName .. " | index: " .. index)
-						
-						local ChannelCheckbox = BBT.AnnouncementChannels[index]
-						--self:Print("channelCheckbox: " .. ChannelCheckbox)
-					
-						return self:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
-					end,
-					set = function(keys, index, state)
-						presenceType = keys[#keys] -- Alone/Party/Raid
-						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
-						
-						local ChannelCheckbox = BBT.AnnouncementChannels[index]
-						--self:Print("channelCheckbox: " .. ChannelCheckbox)
-						
-						self:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
-					end,
+					get = GetAnnouncementSetting,
+					set = SetAnnouncementSetting,
 				},
 				Raid = { 
 					name = "Raid",
@@ -373,26 +357,8 @@ function BBT:GenerateAnnounceSettings(itemTable)
 					order = 3,
 					tristate = false,
 					values = BBT.AnnouncementChannels,
-					get = function(keys, index) 
-						presenceType = keys[#keys] -- Alone/Party/Raid
-						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
-						
-						--self:Print("presenceType: " .. keys[#keys] .. " | keyName: " .. keyName .. " | index: " .. index)
-						
-						local ChannelCheckbox = BBT.AnnouncementChannels[index]
-						--self:Print("channelCheckbox: " .. ChannelCheckbox)
-					
-						return self:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
-					end,
-					set = function(keys, index, state)
-						presenceType = keys[#keys] -- Alone/Party/Raid
-						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
-						
-						local ChannelCheckbox = BBT.AnnouncementChannels[index]
-						--self:Print("channelCheckbox: " .. ChannelCheckbox)
-						
-						self:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
-					end,
+					get = GetAnnouncementSetting,
+					set = SetAnnouncementSetting,
 				},
 			},
 		}
