@@ -332,7 +332,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 					order = 2,
 					tristate = false,
 					values = BBT.AnnouncementChannels,
-						get = function(keys, index) 
+					get = function(keys, index) 
 						presenceType = keys[#keys] -- Alone/Party/Raid
 						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
 						
@@ -342,6 +342,15 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						--self:Print("channelCheckbox: " .. ChannelCheckbox)
 					
 						return self:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
+					end,
+					set = function(keys, index, state)
+						presenceType = keys[#keys] -- Alone/Party/Raid
+						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
+						
+						local ChannelCheckbox = BBT.AnnouncementChannels[index]
+						--self:Print("channelCheckbox: " .. ChannelCheckbox)
+						
+						self:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
 					end,
 				},
 				Raid = { 
@@ -360,6 +369,15 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						--self:Print("channelCheckbox: " .. ChannelCheckbox)
 					
 						return self:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
+					end,
+					set = function(keys, index, state)
+						presenceType = keys[#keys] -- Alone/Party/Raid
+						keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
+						
+						local ChannelCheckbox = BBT.AnnouncementChannels[index]
+						--self:Print("channelCheckbox: " .. ChannelCheckbox)
+						
+						self:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
 					end,
 				},
 			},
@@ -495,17 +513,19 @@ end
 function BBT:GetChannelsToWarn(ability)
 	-- IsInRaid()? IsInParty()?
 
-	local channelsToWarn = BBT.db.profile.Warnings.Abilities.Warrior[ability][2]["Alone"]
+	local presence = IsInRaid() and "Raid" or (IsInGroup() and "Party" or "Alone")
+	
+	local channelsToWarn = BBT.db.profile.Warnings.Abilities.Warrior[ability][2][presence]
 	return channelsToWarn
 end
 
-function BBT:SendWarningMessage(message, channels)
+function BBT:SendWarningMessage(message, ability)
 	if not self:IsWarningsEnabled() then
 		return
 	end
-
-
 	
+	local channels = self:GetChannelsToWarn(ability)
+
 	for index, channel in ipairs(channels) do
 		SendChatMessage(message, channel, "Common")
 	end
@@ -522,7 +542,7 @@ function BBT:OnCombatLogEventUnfiltered()
 		if subevent == "SPELL_CAST_SUCCESS" then
 			--Casts with critical expirations
 			if spellName == L["Last Stand"] or spellName == L["Shield Wall"] then
-				self:SendWarningMessage(string.format(L["%s activated!"], spellName))
+				self:SendWarningMessage(string.format(L["%s activated!"], spellName), spellName)
 				if self:IsWarningExpirationsEnabled() then
 				-- find buff, get its duration and set up a timer
 					local counter = 1
@@ -534,7 +554,7 @@ function BBT:OnCombatLogEventUnfiltered()
 						if name == spellName then
 							C_Timer.After(buffDuration - 3, function()
 									if UnitIsDeadOrGhost("player") ~= true then
-										self:SendWarningMessage(string.format(L["%s will expire in 3 seconds!"], spellName))
+										self:SendWarningMessage(string.format(L["%s will expire in 3 seconds!"], spellName), spellName)
 									end
 								end)
 							break
@@ -544,13 +564,13 @@ function BBT:OnCombatLogEventUnfiltered()
 				end
 			--Casts without critical expirations
 			elseif spellName == L["Challenging Shout"] or spellName == L["Challenging Roar"] then
-				self:SendWarningMessage(string.format(L["%s activated!"], spellName))
+				self:SendWarningMessage(string.format(L["%s activated!"], spellName), spellName)
 			end
 		--Failures
 		elseif subevent == "SPELL_MISSED" then		
 			--We COULD look for the 15th argument of ... here for the type, but we'll just declare any miss as "resisted"
 			if spellName == L["Taunt"] or spellName == L["Mocking Blow"] or spellName == L["Growl"] then
-				self:SendWarningMessage(string.format(L["%s resisted!"], spellName))
+				self:SendWarningMessage(string.format(L["%s resisted!"], spellName), spellName)
 			end
 		end
 	end
