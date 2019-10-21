@@ -163,7 +163,7 @@ BBT.OptionsSlash = {
 		
 	}
 }
--- { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raidwarning" } } 
+
 local Default_Profile = {
 	profile = {
 		IsEnabled = true,
@@ -174,26 +174,40 @@ local Default_Profile = {
 			Abilities = {
 				Warrior = {
 					[L["Last Stand"]] = { "Interface\\Icons\\Spell_Holy_AshesToAshes", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } } 					
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 					
 					},
 					[L["Shield Wall"]] = { "Interface\\Icons\\Ability_Warrior_ShieldWall", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } } 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
 					},
 					[L["Challenging Shout"]] = { "Interface\\Icons\\Ability_BullRush", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } } 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
 					},
-					[L["Taunt"]] = { "Interface\\Icons\\Spell_Nature_Reincarnation", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
-					[L["Mocking Blow"]] = { "Interface\\Icons\\Ability_Warrior_PunishingBlow", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
-					[L["Shield Bash"]] = { "Interface\\Icons\\ability_warrior_shieldbash", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
-					[L["Pummel"]] = { "Interface\\Icons\\inv_gauntlets_04", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
+					[L["Taunt"]] = { "Interface\\Icons\\Spell_Nature_Reincarnation", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					},
+					[L["Mocking Blow"]] = { "Interface\\Icons\\Ability_Warrior_PunishingBlow", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					},
+					[L["Shield Bash"]] = { "Interface\\Icons\\ability_warrior_shieldbash", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid" } }  
+					},
+					[L["Pummel"]] = { "Interface\\Icons\\inv_gauntlets_04", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid" } }  
+					},
 				},
 				Druid = {
-					[L["Challenging Roar"]] = { "Interface\\Icons\\Ability_Druid_ChallangingRoar", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
-					[L["Growl"]] = { "Interface\\Icons\\Ability_Physical_Taunt", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
+					[L["Challenging Roar"]] = { "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					},
+					[L["Growl"]] = { "Interface\\Icons\\Ability_Physical_Taunt", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					},
 				}			
 			},
 			Items = {
-				[L["Lifegiving Gem"]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  },
+				[L["Lifegiving Gem"]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
+				{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  
+				},
 			}
 		},
 	}
@@ -511,8 +525,6 @@ function BBT:EnableWarningExpirations(value)
 end
 
 function BBT:GetChannelsToWarn(ability)
-	-- IsInRaid()? IsInParty()?
-
 	local presence = IsInRaid() and "Raid" or (IsInGroup() and "Party" or "Alone")
 	
 	local channelsToWarn = BBT.db.profile.Warnings.Abilities.Warrior[ability][2][presence]
