@@ -1,0 +1,16 @@
+﻿## Interface: 11302
+## Title: BigBrainTanking
+## Author: Lesmash (Mograine)
+## Notes: Must-have toolkit for tanking
+## Version: 0.2.0
+## OptionalDeps:  Ace3, LibSharedMedia-3.0, 
+## SavedVariables: BigBrainTankingDB
+## SavedVariablesPerCharacter: BigBrainTankingPerCharDB
+
+#@no-lib-strip@
+Embeds.xml
+#@end-no-lib-strip@
+
+Locales\BigBrainTanking-enUS.lua
+
+BigBrainTanking.lua
