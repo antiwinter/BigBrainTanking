@@ -237,7 +237,7 @@ local Default_Profile = {
 				}			
 			},
 			Items = {
-				[L["ITEM_LIFEGIVINGGEM]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
+				[L["ITEM_LIFEGIVINGGEM"]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
 				{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  
 				},
 			}
