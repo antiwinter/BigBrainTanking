@@ -412,7 +412,7 @@ function BBT:SetupOptions()
 	BBT.Options.args.WarningSettings.args["Items"] =  {
 		name = "Items",
 		desc = "Items",
-		--disabled = true,
+		disabled = true,
 		type = "group",
 		order = 6,
 		width = "full",
@@ -518,6 +518,7 @@ function BBT:SendWarningMessage(message, ability)
 	local channels = self:GetChannelsToWarn(ability)
 
 	for index, channel in ipairs(channels) do
+		--self:Print("channel to warn (" .. index .. "): " .. channel)
 		SendChatMessage(message, channel, "Common")
 	end
 end
