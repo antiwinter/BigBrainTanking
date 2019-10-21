@@ -1,8 +1,8 @@
 ﻿## Interface: 11302
 ## Title: BigBrainTanking
-## Author: Lesmash (Mograine)
+## Author: Lesmash (EU-Mograine)
 ## Notes: Must-have toolkit for tanking
-## Version: 0.2.0
+## Version: 0.2.5
 ## OptionalDeps:  Ace3, LibSharedMedia-3.0, 
 ## SavedVariables: BigBrainTankingDB
 ## SavedVariablesPerCharacter: BigBrainTankingPerCharDB

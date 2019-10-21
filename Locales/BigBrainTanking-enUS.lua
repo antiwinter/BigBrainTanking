@@ -25,11 +25,10 @@ L["BBTDescriptionFooter"] = [[
 Addon is able to automatically remove Blessing of Salvation (-30% threat buff) from you. You can fast-toggle whether you want it removed or not with "/bbt salv on" and "/bbt salv off".
 
 |cffffd000Warnings|cffffffff
-You can setup warnings whenever your key abilities get resisted or missed, when you interrupt spell cast or activate an ability/item. Check out warning settings subcategory in addon's options.
-
-|cffffd000Author: Lesmash (Mograine)
-|cffffffffInspired by: TankWarningsClassic, NoSalv (benjen), TankBuddy
+You can setup warnings whenever your key abilities get resisted or missed, when you interrupt spell cast or activate an ability/item. Check out warning settings subcategory in addon's options. 
 ]]
+
+L["INSPIRED_BY"] = "Inspired by"
 
 L["On"] = "On"
 L["Off"] = "Off"
@@ -41,6 +40,8 @@ L["EnableBBT"] = "Enable BigBrainTanking"
 L["EnableBBTDescription"] = "Enables or disables BigBrainTanking both now and also on login."
 L["OnDescription"] = "Enables addon."
 L["OffDescription"] = "Disables addon."
+L["ABOUT_VERSION"] = "Version"
+L["ABOUT_AUTHOR"] = "Author"
 
 -- Salvation 
 L["EnableBBTSalvRemoval"] = "Enable Salvation removal"
@@ -79,3 +80,4 @@ L["%s will expire in 3 seconds!"] = "%s will expire in 3 seconds!"
 L["Lifegiving Gem"] = "Lifegiving Gem"
 L["Shield Bash"] = "Shield Bash"
 L["Pummel"] = "Pummel"
+L["AnnouncementSetup"] = "Announcement Setup"

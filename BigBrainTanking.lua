@@ -4,14 +4,14 @@ local HBDP = LibStub("HereBeDragons-Pins-2.0")
 local AceLocale = LibStub("AceLocale-3.0")
 local L = AceLocale:GetLocale("BigBrainTanking")
 local AceGUI = LibStub("AceGUI-3.0")
+local addonName = ...
 local _
 
 local playerGUID = UnitGUID("player")
 
 BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
-BBT.Version = "1.0.0"
-BBT.DatabaseVersion = "1.0"
-BBT.Signature = "[BBT]"
+BBT.Version = GetAddOnMetadata(addonName, 'Version')
+BBT.Author = GetAddOnMetadata(addonName, "Author") 
 
 BBT.Options = {
 	name = L["BigBrainTanking"],
@@ -59,6 +59,33 @@ BBT.Options = {
 					type = "description",
 					order = 4,
 				},
+				About = {
+					name = "About",
+					type = "group", inline = true,
+					args = {
+						VersionDesc = {
+							order = 1,
+							type = "description",
+							name = "|cffffd700"..L["ABOUT_VERSION"]..": "
+								.._G["GREEN_FONT_COLOR_CODE"]..BBT.Version,
+							cmdHidden = true
+						},
+						AuthorDesc = {
+							order = 2,
+							type = "description",
+							name = "|cffffd700"..L["ABOUT_AUTHOR"]..": "
+								.."|cffff8c00"..BBT.Author,
+							cmdHidden = true
+						},
+						InspireByDesc = {
+							order = 3,
+							type = "description",
+							name = "|cffffd700"..L["INSPIRED_BY"]..": "
+								.."|cffffffffTankWarningsClassic, NoSalv (benjen), TankBuddy",
+							cmdHidden = true
+						},
+					}
+				}
 			},
 		},
 		WarningSettings = {
@@ -99,12 +126,13 @@ BBT.Options = {
 					end,
 				},
 				WarriorSettingsHeader = {
-					name = "Announcement setup (Not yet implemented)",
+					name = L["AnnouncementSetup"],
 					type = "header",
 					order = 4,
 					width = "full"
 				},
 				-- order = 5 filled with Class speicifc settings (Warrior/Druid)
+				-- order = 6 filled with Item specific settings (Lifegiving Gem, etc)
 			}
 		},
 		
@@ -221,7 +249,7 @@ function BBT:HandleProfileChanges()
 end
 
 function BBT:OnInitialize()
-	self:Print("Initializing...")
+	self:Print("Initializing v" .. BBT.Version .. "...")
 	
 	local acedb = LibStub:GetLibrary("AceDB-3.0")
 	self.db = acedb:New("BigBrainTankingDB", Default_Profile)
