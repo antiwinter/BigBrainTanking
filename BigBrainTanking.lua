@@ -327,15 +327,15 @@ function BBT:SetAnnouncementActive(ability, presence, channel, state)
 	
 	local index = self:FindActiveChannelIndex(ability, presence, channel)
 	--self:Print("Index: " .. index)
-	self:Print("State: " .. tostring(state))
+	--self:Print("State: " .. tostring(state))
 	
 	if index == nil and state == true then
-		self:Print("Checked")
+		--self:Print("Checked")
 		table.insert(ActiveChannels, channel)
 	end
 	
 	if index ~= nil and state == false then
-		self:Print("Unckecked")
+		--self:Print("Unckecked")
 		table.remove(ActiveChannels, index)
 	end
 	
@@ -573,13 +573,13 @@ function BBT:KillBuffExpirationTimers()
 end
 
 function BBT:OnPlayerDead()
-	self:Print("BBT:OnPlayerDead")
+	--self:Print("BBT:OnPlayerDead")
 
 	self:KillBuffExpirationTimers()
 end
 
 function BBT:OnBuffExpiration(spellName, warnSecBeforeExpire)
-	self:Print(string.format("BBT:OnBuffExpiration(%s, %f)", spellName, warnSecBeforeExpire))
+	--self:Print(string.format("BBT:OnBuffExpiration(%s, %f)", spellName, warnSecBeforeExpire))
 
 	BBT.BuffTimers[spellName] = nil -- remove from timer handles
 
@@ -596,7 +596,7 @@ function BBT:OnCombatLogEventUnfiltered()
 	
 	if sourceGUID == playerGUID then
 		if subevent == 'SPELL_INTERRUPT' then 
-			self:Print(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
+			--self:Print(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
 			
 			local entityName = nil
 			
@@ -626,7 +626,7 @@ function BBT:OnCombatLogEventUnfiltered()
 							local warnSecBeforeExpire = 3
 							local timeToWarn = buffDuration - warnSecBeforeExpire
 							
-							self:Print("Scheduling buff expiration timer")
+							--self:Print("Scheduling buff expiration timer")
 							BBT.BuffTimers[spellName] = self:ScheduleTimer(self.OnBuffExpiration, timeToWarn, self,  spellName, warnSecBeforeExpire)
 							break
 						end
