@@ -86,6 +86,7 @@ L["ITEM_LIFEGIVINGGEM"] = "Lifegiving Gem"
 L["ABILITY_ACTIVATED"] = "%s activated!"
 L["ABILITY_RESISTED"] = "%s resisted!"
 L["ABILITY_EXPIRATION"] = "%s will expire in %s seconds!"
+L["ABILITY_INTERRUPT"] = "%s's -%s- was interrupted by %s!"
 
 -- Announcments
 L["ANNOUNCEMENT_TAUNT_RESIST"] = "- My Taunt has been resisted by $tn! -";

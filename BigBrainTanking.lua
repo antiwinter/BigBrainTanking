@@ -85,7 +85,7 @@ BBT.Options = {
 							order = 3,
 							type = "description",
 							name = "|cffffd700"..L["INSPIRED_BY"]..": "
-								.."|cffffffffTankWarningsClassic, NoSalv (benjen), TankBuddy",
+								.."|cffffffffTankWarningsClassic, NoSalv (benjen), TankBuddy, SimpleInterruptAnnounce",
 							cmdHidden = true
 						},
 					}
@@ -244,6 +244,35 @@ local Default_Profile = {
 		},
 	}
 }
+
+-- Strings used to insert a raid icon in chat message
+BBT.RaidIconChatStrings = {
+	'{rt1}', '{rt2}', '{rt3}', '{rt4}',
+	'{rt5}', '{rt6}', '{rt7}', '{rt8}',
+}
+
+-- Table for looking up raid icon id from destFlags
+BBT.RaidIconLookup = {
+	[COMBATLOG_OBJECT_RAIDTARGET1]=1,
+	[COMBATLOG_OBJECT_RAIDTARGET2]=2,
+	[COMBATLOG_OBJECT_RAIDTARGET3]=3,
+	[COMBATLOG_OBJECT_RAIDTARGET4]=4,
+	[COMBATLOG_OBJECT_RAIDTARGET5]=5,
+	[COMBATLOG_OBJECT_RAIDTARGET6]=6,
+	[COMBATLOG_OBJECT_RAIDTARGET7]=7,
+	[COMBATLOG_OBJECT_RAIDTARGET8]=8,
+}
+
+-- Get string for raid icon
+function BBT:GetRaidIconString(raidIcon)
+	local s = ''
+
+	if raidIcon then
+		s = BBT.RaidIconChatStrings[raidIcon]
+	end
+
+	return s
+end
 
 function BBT:ResetProfile()
 	BBT.db.profile = Default_Profile.profile
@@ -490,11 +519,6 @@ function BBT:EnableWarnings(value)
 	BBT.db.profile.Warnings.IsEnabled = value
 end
 
-function BBT:IsWarningEnabled(spellName)
-	--return BBT.db.profile.Warnings.Abilities[spellName]
-	return true
-end
-
 function BBT:IsWarningExpirationsEnabled()
 	return BBT.db.profile.Warnings.AnnounceExpirations
 end
@@ -506,7 +530,13 @@ end
 function BBT:GetChannelsToWarn(ability)
 	local presence = IsInRaid() and "Raid" or (IsInGroup() and "Party" or "Alone")
 	
-	local channelsToWarn = BBT.db.profile.Warnings.Abilities.Warrior[ability][2][presence]
+	local abilityAnnounceTable = BBT.db.profile.Warnings.Abilities.Warrior[ability]
+	
+	if abilityAnnounceTable == nil then
+		return nil
+	end
+	
+	local channelsToWarn = abilityAnnounceTable[2][presence]
 	return channelsToWarn
 end
 
@@ -516,6 +546,10 @@ function BBT:SendWarningMessage(message, ability)
 	end
 	
 	local channels = self:GetChannelsToWarn(ability)
+	
+	if channels == nil then
+		return
+	end
 
 	for index, channel in ipairs(channels) do
 		--self:Print("channel to warn (" .. index .. "): " .. channel)
@@ -523,15 +557,60 @@ function BBT:SendWarningMessage(message, ability)
 	end
 end
 
+BBT.BuffTimers = {}
+
+function BBT:KillBuffExpirationTimer(buffName) 
+	if BBT.BuffTimers[buffName] ~= nil then
+		self:CancelTimer(BBT.BuffTimers[buffName])
+		BBT.BuffTimers[buffName] = nil
+	end
+end
+
+function BBT:KillBuffExpirationTimers() 
+	for key, timerID in pairs(BBT.BuffTimers) do
+		self:KillBuffExpirationTimer(key)
+	end
+end
+
+function BBT:OnPlayerDead()
+	self:Print("BBT:OnPlayerDead")
+
+	self:KillBuffExpirationTimers()
+end
+
+function BBT:OnBuffExpiration(spellName, warnSecBeforeExpire)
+	self:Print(string.format("BBT:OnBuffExpiration(%s, %f)", spellName, warnSecBeforeExpire))
+
+	BBT.BuffTimers[spellName] = nil -- remove from timer handles
+
+	if UnitIsDeadOrGhost("player") ~= true then
+		self:SendWarningMessage(string.format(L["ABILITY_EXPIRATION"], spellName, warnSecBeforeExpire), spellName)
+	end
+end
+
 function BBT:OnCombatLogEventUnfiltered() 
-	local timestamp, subevent, hideCaster, sourceGUID, sourceName, sourceflags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, spellSchool = CombatLogGetCurrentEventInfo()
+	local timestamp, subevent, hideCaster, sourceGUID, sourceName, sourceflags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, spellSchool, extraSpellId, extraSpellName, extraSchool = CombatLogGetCurrentEventInfo()
+	
+	-- Get id of raid icon on target, or nil if none
+	local raidIcon = BBT.RaidIconLookup[bit.band(destRaidFlags, COMBATLOG_OBJECT_RAIDTARGET_MASK)]
 	
 	if sourceGUID == playerGUID then
-		if not self:IsWarningEnabled(spellName) then
-			return
-		end
-		
-		if subevent == "SPELL_CAST_SUCCESS" then
+		if subevent == 'SPELL_INTERRUPT' then 
+			self:Print(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
+			
+			local entityName = nil
+			
+			if self:GetRaidIconString(raidIcon) ~= "" then
+				entityName = string.format("%s %s", self:GetRaidIconString(raidIcon), destName)
+			else
+				entityName = destName
+			end
+			
+			self:SendWarningMessage(string.format(L["ABILITY_INTERRUPT"], entityName, extraSpellName, spellName), spellName)
+		elseif subevent == "SPELL_AURA_REMOVED" then
+			--self:Print(string.format("Removed %s from expiration timers, since it was canceled", spellName))
+			self:KillBuffExpirationTimer(spellName)
+		elseif subevent == "SPELL_CAST_SUCCESS" then
 			--Casts with critical expirations
 			if spellName == L["ABILITY_LASTSTAND"] or spellName == L["ABILITY_SHIELDWALL"] then
 				self:SendWarningMessage(string.format(L["ABILITY_ACTIVATED"], spellName), spellName)
@@ -544,12 +623,11 @@ function BBT:OnCombatLogEventUnfiltered()
 						local buffDuration = unitBuff[5]
 						
 						if name == spellName then
-							local timeToWarn = 3 -- Seconds before expiration
-							C_Timer.After(buffDuration - timeToWarn, function()
-									if UnitIsDeadOrGhost("player") ~= true then
-										self:SendWarningMessage(string.format(L["ABILITY_EXPIRATION"], spellName, timeToWarn), spellName)
-									end
-								end)
+							local warnSecBeforeExpire = 3
+							local timeToWarn = buffDuration - warnSecBeforeExpire
+							
+							self:Print("Scheduling buff expiration timer")
+							BBT.BuffTimers[spellName] = self:ScheduleTimer(self.OnBuffExpiration, timeToWarn, self,  spellName, warnSecBeforeExpire)
 							break
 						end
 						counter = counter + 1
@@ -574,11 +652,13 @@ function BBT:OnEnable()
 		self:CancelSalvBuff() -- Cancel existing one if present
 	end
 	
+	BBT:RegisterEvent("PLAYER_DEAD", "OnPlayerDead")
 	BBT:RegisterEvent("UNIT_AURA", "OnUnitAuraEvent")
 	BBT:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "OnCombatLogEventUnfiltered")
 end
 
 function BBT:OnDisable()
+	BBT:UnregisterEvent("PLAYER_DEAD")
 	BBT:UnregisterEvent("UNIT_AURA")
 	BBT:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 end
