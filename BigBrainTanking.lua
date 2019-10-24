@@ -505,8 +505,8 @@ function BBT:CancelSalvBuff()
 	end
 end
 
-function BBT:OnUnitAuraEvent()
-	if self:IsSalvRemovalEnabled() then
+function BBT:OnUnitAuraEvent(unitTarget)
+	if self:IsSalvRemovalEnabled() and unitTarget == "player" then
 		self:CancelSalvBuff()
 	end
 end
@@ -647,6 +647,12 @@ function BBT:OnCombatLogEventUnfiltered()
 	end
 end
 
+function BBT:OnPlayerLeaveCombat()
+	if self:IsSalvRemovalEnabled() then
+		self:CancelSalvBuff() -- Since we can't cancel while in battle, do it just right after
+	end
+end
+
 function BBT:OnEnable()
 	if self:IsSalvRemovalEnabled() then
 		self:CancelSalvBuff() -- Cancel existing one if present
@@ -655,12 +661,14 @@ function BBT:OnEnable()
 	BBT:RegisterEvent("PLAYER_DEAD", "OnPlayerDead")
 	BBT:RegisterEvent("UNIT_AURA", "OnUnitAuraEvent")
 	BBT:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "OnCombatLogEventUnfiltered")
+	BBT:RegisterEvent("PLAYER_LEAVE_COMBAT", "OnPlayerLeaveCombat")
 end
 
 function BBT:OnDisable()
 	BBT:UnregisterEvent("PLAYER_DEAD")
 	BBT:UnregisterEvent("UNIT_AURA")
 	BBT:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+	BBT:UnregisterEvent("PLAYER_LEAVE_COMBAT")
 end
 
 --- IS THIS WORKING/NEEDED?

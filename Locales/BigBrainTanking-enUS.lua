@@ -24,6 +24,8 @@ L["BBTDescriptionFooter"] = [[
 |cffffd000Salvation|cffffffff
 Addon is able to automatically remove Blessing of Salvation (-30% threat buff) from you. You can fast-toggle whether you want it removed or not with "/bbt salv on" and "/bbt salv off".
 
+|cfff00000WARNING: Auto-removal does not function while in combat (Blizzard limitations)!|cffffffff
+
 |cffffd000Warnings|cffffffff
 You can setup warnings whenever your key abilities get resisted or missed, when you interrupt spell cast or activate an ability/item. Check out warning settings subcategory in addon's options. 
 ]]
