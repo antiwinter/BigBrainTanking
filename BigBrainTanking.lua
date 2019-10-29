@@ -12,6 +12,7 @@ local playerGUID = UnitGUID("player")
 BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
 BBT.Version = GetAddOnMetadata(addonName, 'Version')
 BBT.Author = GetAddOnMetadata(addonName, "Author") 
+BBT.DebugPrintEnabled = true
 
 BBT.AnnouncementChannels = {
 	"say", "yell", "party", "raid", "raid_warning" 
@@ -510,7 +511,9 @@ function BBT:CancelSalvBuff()
 	end
 end
 
-function BBT:OnUnitAuraEvent(unitTarget)
+function BBT:OnUnitAuraEvent(eventName, unitTarget)
+	self:PrintDebug(string.format("OnUnitAuraEvent, untitTarget: %s", unitTarget))
+
 	if self:IsSalvRemovalEnabled() and unitTarget == "player" then
 		self:CancelSalvBuff()
 	end
@@ -566,6 +569,7 @@ BBT.BuffTimers = {}
 
 function BBT:KillBuffExpirationTimer(buffName) 
 	if BBT.BuffTimers[buffName] ~= nil then
+		self:PrintDebug(string.format("Removed %s from expiration timers, since it was canceled", buffName))
 		self:CancelTimer(BBT.BuffTimers[buffName])
 		BBT.BuffTimers[buffName] = nil
 	end
@@ -578,19 +582,27 @@ function BBT:KillBuffExpirationTimers()
 end
 
 function BBT:OnPlayerDead()
-	--self:Print("BBT:OnPlayerDead")
+	self:PrintDebug("BBT:OnPlayerDead")
 
 	self:KillBuffExpirationTimers()
 end
 
 function BBT:OnBuffExpiration(spellName, warnSecBeforeExpire)
-	--self:Print(string.format("BBT:OnBuffExpiration(%s, %f)", spellName, warnSecBeforeExpire))
+	self:PrintDebug(string.format("BBT:OnBuffExpiration(%s, %f)", spellName, warnSecBeforeExpire))
 
 	BBT.BuffTimers[spellName] = nil -- remove from timer handles
 
 	if UnitIsDeadOrGhost("player") ~= true then
 		self:SendWarningMessage(string.format(L["ABILITY_EXPIRATION"], spellName, warnSecBeforeExpire), spellName)
 	end
+end
+
+function BBT:PrintDebug(...)
+	if self.DebugPrintEnabled ~= true then
+		return
+	end
+
+	self:Print(...)
 end
 
 function BBT:OnCombatLogEventUnfiltered() 
@@ -601,7 +613,7 @@ function BBT:OnCombatLogEventUnfiltered()
 	
 	if sourceGUID == playerGUID then
 		if subevent == 'SPELL_INTERRUPT' then 
-			--self:Print(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
+			self:PrintDebug(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
 			
 			local entityName = nil
 			
@@ -613,7 +625,6 @@ function BBT:OnCombatLogEventUnfiltered()
 			
 			self:SendWarningMessage(string.format(L["ABILITY_INTERRUPT"], entityName, extraSpellName, spellName), spellName)
 		elseif subevent == "SPELL_AURA_REMOVED" then
-			--self:Print(string.format("Removed %s from expiration timers, since it was canceled", spellName))
 			self:KillBuffExpirationTimer(spellName)
 		elseif subevent == "SPELL_CAST_SUCCESS" then
 			--Casts with critical expirations
@@ -623,15 +634,13 @@ function BBT:OnCombatLogEventUnfiltered()
 				-- find buff, get its duration and set up a timer
 					local counter = 1
 					while UnitBuff("player", counter) do
-						local unitBuff = { UnitBuff("player", counter) }
-						local buffName = unitBuff[1]
-						local buffDuration = unitBuff[5]
+						local buffName, rank, icon, count, debuffType, buffDuration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId  = UnitBuff("player", counter) 
 						
 						if name == spellName then
 							local warnSecBeforeExpire = 3
 							local timeToWarn = buffDuration - warnSecBeforeExpire
 							
-							--self:Print("Scheduling buff expiration timer")
+							self:Print(string.format("Scheduling buff expiration timer %f (buffDuration: %f)", timeToWarn, buffDuration))
 							BBT.BuffTimers[spellName] = self:ScheduleTimer(self.OnBuffExpiration, timeToWarn, self,  spellName, warnSecBeforeExpire)
 							break
 						end
