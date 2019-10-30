@@ -416,7 +416,7 @@ function BBT:SetupOptions()
 	-- Dynamic	
 	local playerClass, englishClass = UnitClass("player")
 	
-	local AnnounceSettingsTable = nil
+	local AnnounceSettingsTable = {}
 	
 	if englishClass == "WARRIOR" then
 		AnnounceSettingsTable = self:GenerateAnnounceSettings(Default_Profile.profile.Warnings.Abilities.Warrior)
