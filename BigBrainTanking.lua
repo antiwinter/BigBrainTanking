@@ -12,7 +12,7 @@ local playerGUID = UnitGUID("player")
 BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
 BBT.Version = GetAddOnMetadata(addonName, 'Version')
 BBT.Author = GetAddOnMetadata(addonName, "Author") 
-BBT.DebugPrintEnabled = true
+BBT.DebugPrintEnabled = false
 
 BBT.AnnouncementChannels = {
 	"say", "yell", "party", "raid", "raid_warning" 
@@ -640,7 +640,7 @@ function BBT:OnCombatLogEventUnfiltered()
 							local warnSecBeforeExpire = 3
 							local timeToWarn = buffDuration - warnSecBeforeExpire
 							
-							self:Print(string.format("Scheduling buff expiration timer %f (buffDuration: %f)", timeToWarn, buffDuration))
+							self:PrintDebug(string.format("Scheduling buff expiration timer %f (buffDuration: %f)", timeToWarn, buffDuration))
 							BBT.BuffTimers[spellName] = self:ScheduleTimer(self.OnBuffExpiration, timeToWarn, self,  spellName, warnSecBeforeExpire)
 							break
 						end
