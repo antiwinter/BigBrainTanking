@@ -494,15 +494,16 @@ function BBT:IsSalvRemovalEnabled()
 end
 
 function BBT:CancelSalvBuff()
-	-- CancelUnitBuff not working in combat
-	if InCombatLockdown() then
-		return
-	end
-
 	local counter = 1
 	while UnitBuff("player", counter) do
 		local name = UnitBuff("player", counter)
 		if string.find(name, L["SalvBuffName"]) then
+			-- CancelUnitBuff not working in combat
+			if InCombatLockdown() then
+				DEFAULT_CHAT_FRAME:AddMessage(L["SalvLock"])
+				return
+			end
+			
 			CancelUnitBuff("player", counter)
 			DEFAULT_CHAT_FRAME:AddMessage(L["SalvRemoved"])
 			return
