@@ -9,7 +9,7 @@ Addon is still work in progress, but core features are implemented.
 * Detailed announcements
 * Support for items (Lifegiving Gem, etc)
 
-Suggestions to what should be added are welcome in the comments.
+Suggestions to what should be added are welcome.
 
 ## Supported Languages
 Since the combat logs have no spell ID in classic, the ability names need to be known for specific languages. Therefore translations for the abilities are required for it to work.
