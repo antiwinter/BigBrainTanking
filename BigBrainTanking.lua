@@ -612,19 +612,18 @@ function BBT:OnCombatLogEventUnfiltered()
 	-- Get id of raid icon on target, or nil if none
 	local raidIcon = BBT.RaidIconLookup[bit.band(destRaidFlags, COMBATLOG_OBJECT_RAIDTARGET_MASK)]
 	
+	local destEntityName = ""
+	if self:GetRaidIconString(raidIcon) ~= "" then
+		destEntityName = string.format("%s %s", self:GetRaidIconString(raidIcon), destName)
+	else
+		destEntityName = destName
+	end
+	
 	if sourceGUID == playerGUID then
 		if subevent == 'SPELL_INTERRUPT' then 
 			self:PrintDebug(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
 			
-			local entityName = nil
-			
-			if self:GetRaidIconString(raidIcon) ~= "" then
-				entityName = string.format("%s %s", self:GetRaidIconString(raidIcon), destName)
-			else
-				entityName = destName
-			end
-			
-			self:SendWarningMessage(string.format(L["ABILITY_INTERRUPT"], entityName, extraSpellName, spellName), spellName)
+			self:SendWarningMessage(string.format(L["ABILITY_INTERRUPT"], destEntityName, extraSpellName, spellName), spellName)
 		elseif subevent == "SPELL_AURA_REMOVED" then
 			self:KillBuffExpirationTimer(spellName)
 		elseif subevent == "SPELL_CAST_SUCCESS" then
@@ -655,8 +654,8 @@ function BBT:OnCombatLogEventUnfiltered()
 		--Failures
 		elseif subevent == "SPELL_MISSED" then		
 			--We COULD look for the 15th argument of ... here for the type, but we'll just declare any miss as "resisted"
-			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_MOCKINGBLOW"] or spellName == L["ABILITY_GROWL"] then
-				self:SendWarningMessage(string.format(L["ABILITY_RESISTED"], spellName), spellName)
+			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] or spellName == L["ABILITY_MOCKINGBLOW"] then
+				self:SendWarningMessage(string.format(L["ABILITY_RESISTED"], destEntityName, spellName), spellName)
 			end
 		end
 	end

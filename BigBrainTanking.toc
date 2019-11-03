@@ -2,7 +2,7 @@
 ## Title: BigBrainTanking
 ## Author: Lesmash (EU-Mograine)
 ## Notes: Must-have toolkit for tanking
-## Version: 0.3.1
+## Version: 0.3.5
 ## OptionalDeps:  Ace3, LibSharedMedia-3.0, 
 ## SavedVariables: BigBrainTankingDB
 ## SavedVariablesPerCharacter: BigBrainTankingPerCharDB

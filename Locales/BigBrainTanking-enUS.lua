@@ -87,7 +87,7 @@ L["ITEM_LIFEGIVINGGEM"] = "Lifegiving Gem"
 
 --- Statuses
 L["ABILITY_ACTIVATED"] = "%s activated!"
-L["ABILITY_RESISTED"] = "%s resisted!"
+L["ABILITY_RESISTED"] = "%s resisted %s!" -- "Core Hound {skull} resisted Taunt!"
 L["ABILITY_EXPIRATION"] = "%s will expire in %s seconds!"
 L["ABILITY_INTERRUPT"] = "%s's -%s- was interrupted by %s!"
 
