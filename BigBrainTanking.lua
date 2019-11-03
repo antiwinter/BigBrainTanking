@@ -8,6 +8,7 @@ local addonName = ...
 local _
 
 local playerGUID = UnitGUID("player")
+local playerClass, englishClass = UnitClass("player")
 
 BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
 BBT.Version = GetAddOnMetadata(addonName, 'Version')
@@ -293,24 +294,42 @@ local Default_Profile = {
 					},
 				},
 				Druid = {
-					[L["ABILITY_CHALLENGINGROAR"]] = { Icon = "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
-					L["ANNOUNCEMENT_CR_ACTIVATION"]
+					[L["ABILITY_CHALLENGINGROAR"]] = { 
+						Icon = "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
+						Announce = { 
+							Activated = {
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_CR_ACTIVATION"], 
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+							},
+						},
 					},
-					[L["ABILITY_GROWL"]] = { Icon = "Interface\\Icons\\Ability_Physical_Taunt", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
-					L["ANNOUNCEMENT_GROWL_RESIST"]
+					[L["ABILITY_GROWL"]] = { 
+						Icon = "Interface\\Icons\\Ability_Physical_Taunt", 
+						Announce = { 
+							Activated = {
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_GROWL_RESIST"], 
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+							},
+						},
 					},
 				}			
 			},
 			Items = {
-				[L["ITEM_LIFEGIVINGGEM"]] = { Icon = "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
-				{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } },
-				L["ANNOUNCEMENT_LG_ACTIVATION"]				
+				[L["ITEM_LIFEGIVINGGEM"]] = { 
+					Icon = "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
+					Announce = { 
+						Activated = {
+							Enabled = true, 
+							Text = L["ANNOUNCEMENT_LG_ACTIVATION"], 
+							Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+						},
+					},
 				},
 			}
 		},
-	}
+	},
 }
 
 -- Strings used to insert a raid icon in chat message
@@ -363,13 +382,21 @@ function BBT:OnInitialize()
 	self:Print("Initializing finished!")
 end
 
+function BBT:GetClassAbilitiesTable() 
+	if englishClass == "WARRIOR" then
+		return BBT.db.profile.Warnings.Abilities.Warrior
+	elseif englishClass == "DRUID" then
+		return BBT.db.profile.Warnings.Abilities.Druid
+	end
+end
+
 function BBT:RegisterModuleOptions(name, optionTbl, displayName)
 	BBT.Options.args[name] = (type(optionTbl) == "function") and optionTbl() or optionTbl
 	self.OptionsFrames[name] = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("BigBrainTanking", displayName, L["BBT Option"], name)
 end
 
-function BBT:FindActiveChannelIndex(ability, presence, channel) 
-	local ActiveChannels = (((BBT.db.profile.Warnings.Abilities.Warrior[ability])[2])[presence])
+function BBT:FindActiveChannelIndex(ability, announceVerb, presence, channel) 
+	local ActiveChannels = BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Channels[presence]
 
 	for index, value in ipairs(ActiveChannels) do
 		if value == channel then
@@ -378,8 +405,8 @@ function BBT:FindActiveChannelIndex(ability, presence, channel)
 	end
 end
 
-function BBT:IsAnnouncementActive(ability, presence, channel)
-	local ActiveChannels = (((BBT.db.profile.Warnings.Abilities.Warrior[ability])[2])[presence])
+function BBT:IsAnnouncementActive(ability, announceVerb, presence, channel)
+	local ActiveChannels = BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Channels[presence]
 	
 	for index, value in ipairs(ActiveChannels) do
 		if value == channel then
@@ -390,10 +417,10 @@ function BBT:IsAnnouncementActive(ability, presence, channel)
 	return false
 end
 
-function BBT:SetAnnouncementActive(ability, presence, channel, state)
-	local ActiveChannels = (((BBT.db.profile.Warnings.Abilities.Warrior[ability])[2])[presence])
+function BBT:SetAnnouncementActive(ability, announceVerb, presence, channel, state)
+	local ActiveChannels = BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Channels[presence]
 	
-	local index = self:FindActiveChannelIndex(ability, presence, channel)
+	local index = self:FindActiveChannelIndex(ability, announceVerb, presence, channel)
 	--self:Print("Index: " .. index)
 	--self:Print("State: " .. tostring(state))
 	
@@ -411,24 +438,26 @@ end
 
 function GetAnnouncementSetting(keys, index) 
 	presenceType = keys[#keys] -- Alone/Party/Raid
-	keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
+	announceVerb = keys[#keys-1] -- Activated/Hit/Failed/etc
+	keyName = keys[#keys-2] -- Pummel/Life Giving Gem/etc
 	
-	--self:Print("presenceType: " .. keys[#keys] .. " | keyName: " .. keyName .. " | index: " .. index)
+	BBT:PrintDebug("presenceType: " .. keys[#keys] .. " | announceVerb" .. announceVerb .. " | keyName: " .. keyName .. " | index: " .. index)
 	
 	local ChannelCheckbox = BBT.AnnouncementChannels[index]
-	--self:Print("channelCheckbox: " .. ChannelCheckbox)
+	BBT:PrintDebug("channelCheckbox: " .. ChannelCheckbox)
 
-	return BBT:IsAnnouncementActive(keyName, presenceType, ChannelCheckbox)
+	return BBT:IsAnnouncementActive(keyName, announceVerb, presenceType, ChannelCheckbox)
 end
 
 function SetAnnouncementSetting(keys, index, state)
 	presenceType = keys[#keys] -- Alone/Party/Raid
-	keyName = keys[#keys-1] -- Pummel/Life Giving Gem/etc
+	announceVerb = keys[#keys-1] -- Activated/Hit/Failed/etc
+	keyName = keys[#keys-2] -- Pummel/Life Giving Gem/etc
 	
 	local ChannelCheckbox = BBT.AnnouncementChannels[index]
 	--self:Print("channelCheckbox: " .. ChannelCheckbox)
 	
-	BBT:SetAnnouncementActive(keyName, presenceType, ChannelCheckbox, state)
+	BBT:SetAnnouncementActive(keyName, announceVerb, presenceType, ChannelCheckbox, state)
 end
 
 function BBT:GenerateAnnounceSettings(itemTable) 
@@ -441,37 +470,49 @@ function BBT:GenerateAnnounceSettings(itemTable)
 			type = "group",
 			order = #AnnounceSettingsTable+1,
 			width = "full",
-			icon = value[1], 
-			args = {
-				Alone = { 
-					name = "Alone",
-					type = "multiselect",
-					order = 1,
-					tristate = false,
-					values = BBT.AnnouncementChannels,
-					get = GetAnnouncementSetting,
-					set = SetAnnouncementSetting,
-				},
-				Party = { 
-					name = "Party",
-					type = "multiselect",
-					order = 2,
-					tristate = false,
-					values = BBT.AnnouncementChannels,
-					get = GetAnnouncementSetting,
-					set = SetAnnouncementSetting,
-				},
-				Raid = { 
-					name = "Raid",
-					type = "multiselect",
-					order = 3,
-					tristate = false,
-					values = BBT.AnnouncementChannels,
-					get = GetAnnouncementSetting,
-					set = SetAnnouncementSetting,
-				},
-			},
+			icon = value.Icon, 
+			args = {},
 		}
+		
+		for key, value in pairs(value.Announce) do
+			AnnounceSetting.args[key] = {
+				name = key,
+				desc = key,
+				type = "group",
+				width = "full",
+				childGroups = "tab",
+				args = {
+					Alone = { 
+						name = "Alone",
+						type = "multiselect",
+						order = 1,
+						tristate = false,
+						values = BBT.AnnouncementChannels,
+						get = GetAnnouncementSetting,
+						set = SetAnnouncementSetting,
+					},
+					Party = { 
+						name = "Party",
+						type = "multiselect",
+						order = 2,
+						tristate = false,
+						values = BBT.AnnouncementChannels,
+						get = GetAnnouncementSetting,
+						set = SetAnnouncementSetting,
+					},
+					Raid = { 
+						name = "Raid",
+						type = "multiselect",
+						order = 3,
+						tristate = false,
+						values = BBT.AnnouncementChannels,
+						get = GetAnnouncementSetting,
+						set = SetAnnouncementSetting,
+					},
+				},
+			}
+			
+		end
 		
 		AnnounceSettingsTable[key] = AnnounceSetting
 	end
