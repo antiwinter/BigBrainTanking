@@ -13,7 +13,7 @@ local playerClass, englishClass = UnitClass("player")
 BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
 BBT.Version = GetAddOnMetadata(addonName, 'Version')
 BBT.Author = GetAddOnMetadata(addonName, "Author") 
-BBT.DebugPrintEnabled = false
+BBT.DebugPrintEnabled = true
 
 BBT.AnnouncementChannels = {
 	"say", "yell", "party", "raid", "raid_warning" 
@@ -214,6 +214,11 @@ local Default_Profile = {
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_LS_ACTIVATION"],
 								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+							}, 
+							Expiration = { 
+								Enabled = true, 
+								Text = L["ABILITY_EXPIRATION"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
 							},	
 						},
 					},
@@ -223,6 +228,11 @@ local Default_Profile = {
 							Activated = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_SW_ACTIVATION"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+							},
+							Expiration = { 
+								Enabled = true, 
+								Text = L["ABILITY_EXPIRATION"],
 								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
 							},	
 						},
@@ -644,32 +654,48 @@ function BBT:EnableWarningExpirations(value)
 	BBT.db.profile.Warnings.AnnounceExpirations = value
 end
 
-function BBT:GetChannelsToWarn(ability)
+function BBT:GetAbilityAnnounce(ability, announceVerb) 
 	local presence = IsInRaid() and "Raid" or (IsInGroup() and "Party" or "Alone")
+
+	if ability == nil then
+		ability = "{empty}"
+	end
+
+	if announceVerb == nil then
+		announceVerb = "{empty}"
+	end
+
+	BBT:PrintDebug(string.format("BBT:GetAbilityAnnounce(ability: %s, announceVerb: %s)", ability, announceVerb))
 	
-	local abilityAnnounceTable = BBT.db.profile.Warnings.Abilities.Warrior[ability]
+	local AbilityAnnounce = BBT:GetClassAbilitiesTable()[ability]
+
+	if AbilityAnnounce == nil then
+		BBT:PrintDebug(string.format("Invalid ability %s", ability))
+		return nil
+	end
+
+	local Announce = AbilityAnnounce.Announce[announceVerb]
 	
-	if abilityAnnounceTable == nil then
+	if Announce == nil then
+		BBT:PrintDebug(string.format("Invalid announce verb %s", announceVerb))
 		return nil
 	end
 	
-	local channelsToWarn = abilityAnnounceTable[2][presence]
-	return channelsToWarn
+	return Announce.Text, Announce.Channels[presence]
 end
 
-function BBT:SendWarningMessage(message, ability)
+function BBT:SendWarningMessage(message, channels)
 	if not self:IsWarningsEnabled() then
 		return
 	end
 	
-	local channels = self:GetChannelsToWarn(ability)
-	
-	if channels == nil then
+	if channels == nil or #channels == 0 then
+		self:PrintDebug("no channels to warn")
 		return
 	end
 
 	for index, channel in ipairs(channels) do
-		--self:Print("channel to warn (" .. index .. "): " .. channel)
+		self:PrintDebug("channel to warn (" .. index .. "): " .. channel)
 		SendChatMessage(message, channel, "Common")
 	end
 end
@@ -702,7 +728,7 @@ function BBT:OnBuffExpiration(spellName, warnSecBeforeExpire)
 	BBT.BuffTimers[spellName] = nil -- remove from timer handles
 
 	if UnitIsDeadOrGhost("player") ~= true then
-		self:SendWarningMessage(string.format(L["ABILITY_EXPIRATION"], spellName, warnSecBeforeExpire), spellName)
+		self:SendWarningMessage(string.format(BBT:GetAbilityText(spellName, Expiration), spellName, warnSecBeforeExpire), spellName, Expiration)
 	end
 end
 
@@ -731,13 +757,19 @@ function BBT:OnCombatLogEventUnfiltered()
 		if subevent == 'SPELL_INTERRUPT' then 
 			self:PrintDebug(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
 			
-			self:SendWarningMessage(string.format(L["ABILITY_INTERRUPT"], destEntityName, extraSpellName, spellName), spellName)
+			local message, channels = BBT:GetAbilityAnnounce(spellName, "Hit")
+			message = string.format(message, destEntityName, extraSpellName, spellName)
+			self:PrintDebug(string.format("MSG: %s", message))
+			
+			self:SendWarningMessage(message, channels)
 		elseif subevent == "SPELL_AURA_REMOVED" then
 			self:KillBuffExpirationTimer(spellName)
 		elseif subevent == "SPELL_CAST_SUCCESS" then
 			--Casts with critical expirations
 			if spellName == L["ABILITY_LASTSTAND"] or spellName == L["ABILITY_SHIELDWALL"] then
-				self:SendWarningMessage(string.format(L["ABILITY_ACTIVATED"], spellName), spellName)
+				local message, channels = BBT:GetAbilityAnnounce(spellName, "Activated")
+			
+				self:SendWarningMessage(string.format(message, spellName), channels)
 				if self:IsWarningExpirationsEnabled() then
 				-- find buff, get its duration and set up a timer
 					local counter = 1
@@ -757,13 +789,20 @@ function BBT:OnCombatLogEventUnfiltered()
 				end
 			--Casts without critical expirations
 			elseif spellName == L["ABILITY_CHALLENGINGSHOUT"] or spellName == L["ABILITY_CHALLENGINGROAR"] then
-				self:SendWarningMessage(string.format(L["ABILITY_ACTIVATED"], spellName), spellName)
+				local message, channels = BBT:GetAbilityAnnounce(spellName, "Activated")
+				self:SendWarningMessage(string.format(message, spellName), channels)
 			end
 		--Failures
 		elseif subevent == "SPELL_MISSED" then		
 			--We COULD look for the 15th argument of ... here for the type, but we'll just declare any miss as "resisted"
 			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] or spellName == L["ABILITY_MOCKINGBLOW"] then
-				self:SendWarningMessage(string.format(L["ABILITY_RESISTED"], destEntityName, spellName), spellName)
+				local message, channels = BBT:GetAbilityAnnounce(spellName, "Failed")
+				self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
+			else 
+				local message, channels = BBT:GetAbilityAnnounce(spellName, "Failed")
+				if message ~= nil then
+					self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
+				end
 			end
 		end
 	end
