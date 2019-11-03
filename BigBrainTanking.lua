@@ -206,40 +206,107 @@ local Default_Profile = {
 			AnnounceExpirations  = true,
 			Abilities = {
 				Warrior = {
-					[L["ABILITY_LASTSTAND"]] = { "Interface\\Icons\\Spell_Holy_AshesToAshes", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 					
+					[L["ABILITY_LASTSTAND"]] = { 
+						Icon = "Interface\\Icons\\Spell_Holy_AshesToAshes", 
+						Announce = { 
+							Activated = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_LS_ACTIVATION"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+							},	
+						},
 					},
-					[L["ABILITY_SHIELDWALL"]] = { "Interface\\Icons\\Ability_Warrior_ShieldWall", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
+					[L["ABILITY_SHIELDWALL"]] = { 
+						Icon = "Interface\\Icons\\Ability_Warrior_ShieldWall", 
+						Announce = { 
+							Activated = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_SW_ACTIVATION"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+							},	
+						},
 					},
-					[L["ABILITY_CHALLENGINGSHOUT"]] = { "Interface\\Icons\\Ability_BullRush", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
+					[L["ABILITY_CHALLENGINGSHOUT"]] = { 
+						Icon = "Interface\\Icons\\Ability_BullRush", 
+						Announce = { 
+							Activated = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_CS_ACTIVATION"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+							},		
+						},					
 					},
-					[L["ABILITY_TAUNT"]] = { "Interface\\Icons\\Spell_Nature_Reincarnation", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					[L["ABILITY_TAUNT"]] = { 
+						Icon = "Interface\\Icons\\Spell_Nature_Reincarnation", 
+						Announce = { 
+							Resisted = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_TAUNT_RESIST"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },					
+							},
+						},
 					},
-					[L["ABILITY_MOCKINGBLOW"]] = { "Interface\\Icons\\Ability_Warrior_PunishingBlow", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					[L["ABILITY_MOCKINGBLOW"]] = { 
+						Icon = "Interface\\Icons\\Ability_Warrior_PunishingBlow", 
+						Announce = { 
+							Hit = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_MB_HIT"], 
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
+							},
+							Failed = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_MB_FAIL"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }
+							},
+						},
 					},
-					[L["ABILITY_SHIELDBASH"]] = { "Interface\\Icons\\ability_warrior_shieldbash", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid" } }  
+					[L["ABILITY_SHIELDBASH"]] = { 
+						Icon = "Interface\\Icons\\ability_warrior_shieldbash", 
+						Announce = { 
+							Hit = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_SB_HIT"],
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+							}, 
+							Failed = { 
+								Enabled = true, 
+								L["ANNOUNCEMENT_SB_MISS"] ,
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+							}, 
+						},
 					},
-					[L["ABILITY_PUMMEL"]] = { "Interface\\Icons\\inv_gauntlets_04", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid" } }  
+					[L["ABILITY_PUMMEL"]] = { 
+						Icon = "Interface\\Icons\\inv_gauntlets_04",
+						Announce = { 
+							Hit = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_PM_HIT"], 
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	 
+							}, 
+							Failed = { 
+								Enabled = true, 
+								Text = L["ANNOUNCEMENT_PM_MISS"], 
+								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+							},					
+						},
 					},
 				},
 				Druid = {
-					[L["ABILITY_CHALLENGINGROAR"]] = { "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					[L["ABILITY_CHALLENGINGROAR"]] = { Icon = "Interface\\Icons\\Ability_Druid_ChallangingRoar", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+					L["ANNOUNCEMENT_CR_ACTIVATION"]
 					},
-					[L["ABILITY_GROWL"]] = { "Interface\\Icons\\Ability_Physical_Taunt", 
-					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }  
+					[L["ABILITY_GROWL"]] = { Icon = "Interface\\Icons\\Ability_Physical_Taunt", 
+					{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+					L["ANNOUNCEMENT_GROWL_RESIST"]
 					},
 				}			
 			},
 			Items = {
-				[L["ITEM_LIFEGIVINGGEM"]] = { "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
-				{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } }  
+				[L["ITEM_LIFEGIVINGGEM"]] = { Icon = "Interface\\Icons\\INV_Misc_Gem_Pearl_05", 
+				{ Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "yell", "raid_warning" } },
+				L["ANNOUNCEMENT_LG_ACTIVATION"]				
 				},
 			}
 		},
