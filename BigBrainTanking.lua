@@ -911,7 +911,7 @@ function BBT:OnCombatLogEventUnfiltered()
 				-- find buff, get its duration and set up a timer
 				local counter = 1
 				while UnitBuff("player", counter) do
-					local buffName, rank, icon, count, debuffType, buffDuration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId  = UnitBuff("player", counter) 
+					local buffName, icon, count, debuffType, buffDuration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId  = UnitBuff("player", counter) 
 					
 					if buffName == spellName then
 						local warnSecBeforeExpire = 3
