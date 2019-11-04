@@ -20,5 +20,5 @@ Since the combat logs have no spell ID in classic, the ability names need to be 
 New translations are welcome, please look into the "Locales/BigBrainTanking-enUS.lua" file if you would like to contribute.
 
 ### Currently supported
-English
-Chinese
+* English
+* Chinese
