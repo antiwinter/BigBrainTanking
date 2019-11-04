@@ -11,6 +11,7 @@ BigBrainTanking is an addon for World of Warcraft 1.13.2 that is aimed to assist
 ## Planned
 * Support for items (Lifegiving Gem, etc)
 * Tank adviser (dynamic tips based on theory crafting and your current stats/gear)
+* Druid and Paladin support
 
 Suggestions to what should be added are welcome.
 
