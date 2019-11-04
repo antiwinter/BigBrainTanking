@@ -95,6 +95,7 @@ L["ABILITY_EXPIRATION"] = "%s will expire in %s seconds!"
 L["ABILITY_INTERRUPT"] = "%s's -%s- was interrupted by %s!"
 
 -- Announcments
+L["ANNOUNCEMENT_TAUNT_HIT"] = "- Taunted $tn! - "
 L["ANNOUNCEMENT_TAUNT_RESIST"] = "- My Taunt has been resisted by $tn! -";
 L["ANNOUNCEMENT_MB_HIT"] = "- Used Mocking Blow against $tn! -";
 L["ANNOUNCEMENT_MB_FAIL"] = "- My Mocking Blow failed against $tn! -";
@@ -103,7 +104,7 @@ L["ANNOUNCEMENT_PM_MISS"] = "Pummel missed against $tn!";
 L["ANNOUNCEMENT_SB_HIT"] = "Shield Bash interrupted $tn!";
 L["ANNOUNCEMENT_SB_MISS"] = "Shield Bash missed against $tn!";
 L["ANNOUNCEMENT_LS_ACTIVATION"] = "- I activated Last Stand! In $sec seconds I will lose $hpHP! -";
-L["ANNOUNCEMENT_SW_ACTIVATION"] = "- I activated Shield Wall and will be taking 75% less damage for $sec seconds! -";
+L["ANNOUNCEMENT_SW_ACTIVATION"] = "- I activated Shield Wall and will be taking 75%% less damage for $sec seconds! -";
 L["ANNOUNCEMENT_LG_ACTIVATION"] = "- I activated Lifegiving Gem! In $sec seconds I will lose $hpHP! -";
 L["ANNOUNCEMENT_CS_ACTIVATION"] = "- I activated Challenging Shout! I will need a lot of healing for $sec seconds! -";
 L["ANNOUNCEMENT_GROWL_RESIST"] = "- My Growl has been resisted by $tn! -";
