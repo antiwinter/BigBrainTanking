@@ -4,9 +4,11 @@ Addon is still work in progress, but core features are implemented.
 ## Core features
 * Automatic salvation removal
 * Announcements (Interrupts, Misses, Resists, Activation for key abilities)
+  * Custom messages
+  * Custom channels
+  * Detailed announcements (hp lost after last stand, spell durations, target names with raid marks, etc)
+
 ## Soon
-* Custom messages for announcements
-* Detailed announcements
 * Support for items (Lifegiving Gem, etc)
 
 Suggestions to what should be added are welcome.
@@ -18,3 +20,4 @@ New translations are welcome, please look into the "Locales/BigBrainTanking-enUS
 
 ### Currently supported
 English
+Chinese
