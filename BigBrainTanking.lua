@@ -121,7 +121,12 @@ BBT.Options = {
 					set = function(info, value)
 						BBT:EnableWarnings(value)
 					end,
-				},
+				},--[[
+				WarriorSettingsAddDesc = {
+					name = L["WARNING_SETTINGS_ADD_DESCRIPTION"],
+					type = "description",
+					order = 3,
+				},--]]
 				WarriorSettingsHeader = {
 					name = L["AnnouncementSetup"],
 					type = "header",
@@ -586,14 +591,15 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						set = SetAnnounceEnabled,						
 					},
 					TextGrp = {
-						name = "Announcement text",
+						name = L["ANNOUNCEMENT_TEXT"],
 						type = "group",
 						width = "full",
 						inline = true,
 						order = 2,
 						args = {
 							Text = {
-								name = "Message",
+								name = L["ANNOUNCEMENT_TEXT_MESSAGE"],
+								desc = L["ANNOUNCEMENT_TEXT_DESCRIPTION"],
 								type = "input",
 								order = 1,
 								width = "full",
@@ -663,7 +669,7 @@ function BBT:SetupOptions()
 
 	BBT.Options.args.WarningSettings.args["Abilities"] =  {
 		name = "Abilities",
-		desc = "Abilities",
+		desc = L["WS_ABILITIES"],
 		--disabled = true,
 		type = "group",
 		order = 5,
@@ -676,7 +682,7 @@ function BBT:SetupOptions()
 	
 	BBT.Options.args.WarningSettings.args["Items"] =  {
 		name = "Items",
-		desc = "Items",
+		desc = L["WS_ITEMS"],
 		disabled = true,
 		type = "group",
 		order = 6,
@@ -934,7 +940,7 @@ function BBT:OnCombatLogEventUnfiltered()
 				message = string.gsub(message, "$sd", spellDuration)
 				
 				if spellName == L["ABILITY_LASTSTAND"] then
-					message = string.gsub(message, "$lshp", math.floor((UnitHealthMax("player")/130)*30))
+					message = string.gsub(message, "$lshp", math.floor(UnitHealthMax("player")*0.3))
 				end
 				
 				self:PrintDebug(string.format("MSG: %s", message))
@@ -958,7 +964,7 @@ function BBT:OnCombatLogEventUnfiltered()
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Hit")
 				message = string.gsub(message, "$tn", destEntityName)
 				
-				self:SendWarningMessage(string.format(message, spellName), channels)
+				self:SendWarningMessage(message, channels)
 			end
 		--Failures
 		elseif subevent == "SPELL_MISSED" then		
@@ -974,6 +980,11 @@ function BBT:OnCombatLogEventUnfiltered()
 				if message ~= nil then
 					message = string.gsub(message, "$tn", destEntityName)
 					message = string.gsub(message, "$sn", spellName)
+					--[[
+					if spellname == L["ABILITY_PUMMEL"] or spellName == L["ABILITY_SHIELDBASH"] then
+						message = string.gsub(message, "$is", extraSpellName)
+					end
+					--]]
 				
 					self:SendWarningMessage(message, channels)
 				end

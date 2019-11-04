@@ -61,6 +61,22 @@ L["SalvRemovalDisabled"] = "[BBT] Salvation removal disabled!"
 L["SalvBuffName"] = "Blessing of Salvation"
 
 -- Warnings
+L["WS_ABILITIES"] = "Abilities"
+L["WS_ITEMS"] = "Items"
+L["ANNOUNCEMENT_TEXT"] = "Announcement text"
+L["ANNOUNCEMENT_TEXT_MESSAGE"] = "Message"
+L["ANNOUNCEMENT_TEXT_DESCRIPTION"] = [[
+
+|cffffd000Special text|cffffffff
+Announcement text can contain special sequences:
+
+$tn - target name (includes raid mark)
+$sn - spell name
+$is - interrupted spell
+$sd - spell duration in seconds
+$lshp - Last Stand hp gained
+]]
+
 L["AnnouncementSetup"] = "Announcement Setup"
 L["WarningSettings"] = "Warning Settings"
 L["WarningSettingsDescription"] = [[
@@ -90,7 +106,7 @@ L["ITEM_LIFEGIVINGGEM"] = "Lifegiving Gem"
 
 
 --[[ 
-	Special characters:
+	Special text:
 	
 	$tn - target name (including mark)
 	$sn - spell name
