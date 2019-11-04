@@ -19,6 +19,10 @@ BBT.AnnouncementChannels = {
 	"say", "yell", "party", "raid", "raid_warning" 
 }
 
+BBT.AnnouncementCustomChannels = {
+	"illutank"
+}
+
 BBT.Options = {
 	name = L["BigBrainTanking"],
 	type = "group",
@@ -511,7 +515,7 @@ function GetAnnouncementSetting(keys, index)
 	
 	BBT:PrintDebug("presenceType: " .. keys[#keys] .. " | announceVerb" .. announceVerb .. " | keyName: " .. keyName .. " | index: " .. index)
 	
-	local ChannelCheckbox = BBT.AnnouncementChannels[index]
+	local ChannelCheckbox = GetAllAnnouncementChannels()[index]
 	BBT:PrintDebug("channelCheckbox: " .. ChannelCheckbox)
 
 	return BBT:IsAnnouncementActive(keyName, announceVerb, presenceType, ChannelCheckbox)
@@ -522,7 +526,7 @@ function SetAnnouncementSetting(keys, index, state)
 	announceVerb = keys[#keys-1] -- Activated/Hit/Failed/etc
 	keyName = keys[#keys-2] -- Pummel/Life Giving Gem/etc
 	
-	local ChannelCheckbox = BBT.AnnouncementChannels[index]
+	local ChannelCheckbox = GetAllAnnouncementChannels()[index]
 	--self:Print("channelCheckbox: " .. ChannelCheckbox)
 	
 	BBT:SetAnnouncementActive(keyName, announceVerb, presenceType, ChannelCheckbox, state)
@@ -538,6 +542,20 @@ function SetAnnounceEnabled(info, value)
 	announceVerb = info[#info-1] -- Activated/Hit/Failed/etc
 	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
 	BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Enabled = value
+end
+
+function GetAllAnnouncementChannels()
+	local AnnounceChannels = {}
+	
+	for index, value in ipairs(BBT.AnnouncementChannels) do
+		table.insert(AnnounceChannels, value)
+	end
+	
+	for index, value in ipairs(BBT.AnnouncementCustomChannels) do
+		table.insert(AnnounceChannels, value)
+	end
+
+	return AnnounceChannels
 end
 
 function BBT:GenerateAnnounceSettings(itemTable) 
@@ -599,7 +617,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						type = "multiselect",
 						order = 3,
 						tristate = false,
-						values = BBT.AnnouncementChannels,
+						values = GetAllAnnouncementChannels,
 						get = GetAnnouncementSetting,
 						set = SetAnnouncementSetting,
 					},
@@ -608,7 +626,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						type = "multiselect",
 						order = 4,
 						tristate = false,
-						values = BBT.AnnouncementChannels,
+						values = GetAllAnnouncementChannels,
 						get = GetAnnouncementSetting,
 						set = SetAnnouncementSetting,
 					},
@@ -617,7 +635,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						type = "multiselect",
 						order = 5,
 						tristate = false,
-						values = BBT.AnnouncementChannels,
+						values = GetAllAnnouncementChannels,
 						get = GetAnnouncementSetting,
 						set = SetAnnouncementSetting,
 					},
@@ -791,6 +809,16 @@ function BBT:GetAbilityAnnounce(ability, announceVerb)
 	return Announce.Text, Announce.Channels[presence]
 end
 
+function BBT:IsDefaultChannel(channelName) 
+	for index, value in ipairs(BBT.AnnouncementChannels) do
+		if value == channelName then
+			return true
+		end
+	end
+	
+	return false
+end
+
 function BBT:SendWarningMessage(message, channels)
 	if not self:IsWarningsEnabled() then
 		return
@@ -801,9 +829,18 @@ function BBT:SendWarningMessage(message, channels)
 		return
 	end
 
-	for index, channel in ipairs(channels) do
-		self:PrintDebug("channel to warn (" .. index .. "): " .. channel)
-		SendChatMessage(message, channel, "Common")
+	for index, channelName in ipairs(channels) do
+		self:PrintDebug("channel to warn (" .. index .. "): " .. channelName)
+		
+		if BBT:IsDefaultChannel(channelName) then
+			SendChatMessage(message, channelName, "COMMON")		
+		else
+			local channelID = GetChannelName(channelName);
+			
+			if channelID > 0 then
+				SendChatMessage(message, "CHANNEL", nil, channelID)			
+			end
+		end
 	end
 end
 
@@ -875,8 +912,10 @@ function BBT:OnCombatLogEventUnfiltered()
 			--Casts with critical expirations
 			if spellName == L["ABILITY_LASTSTAND"] or spellName == L["ABILITY_SHIELDWALL"] then
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Activated")
+				message = string.format(message, spellName)
+				self:PrintDebug(string.format("MSG: %s", message))
 			
-				self:SendWarningMessage(string.format(message, spellName), channels)
+				self:SendWarningMessage(message, channels)
 				if self:IsWarningExpirationsEnabled() then
 				-- find buff, get its duration and set up a timer
 					local counter = 1
