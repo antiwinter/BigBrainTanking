@@ -1,5 +1,5 @@
 # BigBrainTanking
-BigBrainTanking is an addon that is aimed to assist you with tanking chores.
+BigBrainTanking is an addon for World of Warcraft 1.13.2 that is aimed to assist you with tanking chores.
 
 ## Features
 * Automatic salvation removal
