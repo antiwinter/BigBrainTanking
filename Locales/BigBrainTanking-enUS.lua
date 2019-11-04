@@ -63,6 +63,7 @@ L["SalvBuffName"] = "Blessing of Salvation"
 -- Warnings
 L["WS_ABILITIES"] = "Abilities"
 L["WS_ITEMS"] = "Items"
+L["WS_CUSTOM_CHANNELS"] = "Custom channels"
 L["ANNOUNCEMENT_TEXT"] = "Announcement text"
 L["ANNOUNCEMENT_TEXT_MESSAGE"] = "Message"
 L["ANNOUNCEMENT_TEXT_DESCRIPTION"] = [[

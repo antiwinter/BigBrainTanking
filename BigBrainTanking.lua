@@ -19,9 +19,37 @@ BBT.AnnouncementChannels = {
 	"say", "yell", "party", "raid", "raid_warning" 
 }
 
-BBT.AnnouncementCustomChannels = {
-	"illutank"
-}
+function GetAnnounceChannels(info)
+	return table.concat(BBT.db.profile.Warnings.AnnouncementCustomChannels, ", ")
+end
+
+function IsValuePresentInTable(tableIn, valueCompare) 
+	for index, value in ipairs(tableIn) do
+		if valueCompare == value then
+			return true
+		end
+	end
+	
+	return false
+end
+
+function SetAnnounceChannels(info, value)
+	local NewCustomAnnouncementChannels = {}
+	
+	-- get all the channels listed in input box
+	for channel in string.gmatch(value, '([^,%s]+)') do
+		table.insert(NewCustomAnnouncementChannels, channel)		
+	end
+	
+	-- clear deleted channels
+	for index, channel in ipairs(BBT.db.profile.Warnings.AnnouncementCustomChannels) do
+		if not IsValuePresentInTable(NewCustomAnnouncementChannels) then
+			BBT:ClearAllAnnouncementsForChannel(channel)
+		end
+	end
+	
+	BBT.db.profile.Warnings.AnnouncementCustomChannels = NewCustomAnnouncementChannels
+end
 
 BBT.Options = {
 	name = L["BigBrainTanking"],
@@ -121,12 +149,15 @@ BBT.Options = {
 					set = function(info, value)
 						BBT:EnableWarnings(value)
 					end,
-				},--[[
-				WarriorSettingsAddDesc = {
-					name = L["WARNING_SETTINGS_ADD_DESCRIPTION"],
-					type = "description",
+				},
+				WarningsCustomChannels = {
+					name = L["WS_CUSTOM_CHANNELS"],
+					type = "input",
 					order = 3,
-				},--]]
+					width = "full",
+					get = GetAnnounceChannels,
+					set = SetAnnounceChannels
+				},
 				WarriorSettingsHeader = {
 					name = L["AnnouncementSetup"],
 					type = "header",
@@ -227,6 +258,9 @@ local Default_Profile = {
 		IsSalvRemovalEnabled = true,
 		Warnings = {
 			IsEnabled = true,
+			AnnouncementCustomChannels = {
+				-- filled by UI
+			},
 			Abilities = {
 				Warrior = {
 					[L["ABILITY_LASTSTAND"]] = { 
@@ -483,7 +517,23 @@ function BBT:SetAnnouncementActive(ability, announceVerb, presence, channel, sta
 		--self:Print("Unckecked")
 		table.remove(ActiveChannels, index)
 	end
+end
+
+function BBT:ClearAllAnnouncementsForChannel(channel)
+	local AbilitiesTable = BBT:GetClassAbilitiesTable()
 	
+	for abilityName, abilityValue in pairs(AbilitiesTable) do
+		for announceName, announceValue in pairs(abilityValue.Announce) do
+			for presenceName, channels in pairs(announceValue.Channels) do
+				local channelIndex = BBT:FindActiveChannelIndex(abilityName, announceName, presenceName, channel)
+				
+				if channelIndex ~= nil then
+					self:PrintDebug("Removed channel from announcement: " .. channel)
+					table.remove(channels, channelIndex)
+				end
+			end
+		end
+	end
 end
 
 
@@ -514,10 +564,10 @@ function GetAnnouncementSetting(keys, index)
 	announceVerb = keys[#keys-1] -- Activated/Hit/Failed/etc
 	keyName = keys[#keys-2] -- Pummel/Life Giving Gem/etc
 	
-	BBT:PrintDebug("presenceType: " .. keys[#keys] .. " | announceVerb" .. announceVerb .. " | keyName: " .. keyName .. " | index: " .. index)
+	--BBT:PrintDebug("presenceType: " .. keys[#keys] .. " | announceVerb" .. announceVerb .. " | keyName: " .. keyName .. " | index: " .. index)
 	
 	local ChannelCheckbox = GetAllAnnouncementChannels()[index]
-	BBT:PrintDebug("channelCheckbox: " .. ChannelCheckbox)
+	--BBT:PrintDebug("channelCheckbox: " .. ChannelCheckbox)
 
 	return BBT:IsAnnouncementActive(keyName, announceVerb, presenceType, ChannelCheckbox)
 end
@@ -552,7 +602,7 @@ function GetAllAnnouncementChannels()
 		table.insert(AnnounceChannels, value)
 	end
 	
-	for index, value in ipairs(BBT.AnnouncementCustomChannels) do
+	for index, value in ipairs(BBT.db.profile.Warnings.AnnouncementCustomChannels) do
 		table.insert(AnnounceChannels, value)
 	end
 
