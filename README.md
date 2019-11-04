@@ -1,7 +1,7 @@
 # BigBrainTanking
 Addon is still work in progress, but core features are implemented.
 
-## Core features
+## Features
 * Automatic salvation removal
 * Announcements (Interrupts, Misses, Resists, Activation for key abilities)
   * Custom messages
@@ -10,6 +10,7 @@ Addon is still work in progress, but core features are implemented.
 
 ## Soon
 * Support for items (Lifegiving Gem, etc)
+* Tank adviser (dynamic tips based on theory crafting and your current stats/gear)
 
 Suggestions to what should be added are welcome.
 
