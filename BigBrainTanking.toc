@@ -12,5 +12,6 @@ Embeds.xml
 #@end-no-lib-strip@
 
 Locales\BigBrainTanking-enUS.lua
+Locales\BigBrainTanking-zhCN.lua
 
 BigBrainTanking.lua
