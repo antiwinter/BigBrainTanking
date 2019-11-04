@@ -949,15 +949,11 @@ function BBT:OnCombatLogEventUnfiltered()
 			
 			--Casts without critical expirations
 			elseif spellName == L["ABILITY_CHALLENGINGSHOUT"] or spellName == L["ABILITY_CHALLENGINGROAR"] then
-				local spellDuration = BBT:GetBuffDuration(spellName)
+				local spellDuration = 6 -- Both Shout and Roar last 6 seconds
 				
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Activated")
 				message = string.gsub(message, "$sn", spellName)
-				
-				-- TODO: MIGHT NOT WORK, NEED TO GET IT SOMEWHERE ELSE
-				if spellDuration ~= nil then
-					message = string.gsub(message, "$sd", spellDuration)
-				end
+				message = string.gsub(message, "$sd", spellDuration)
 				
 				self:SendWarningMessage(string.format(message, spellName), channels)
 			elseif spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] then
