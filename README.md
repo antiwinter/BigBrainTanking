@@ -1,5 +1,5 @@
 # BigBrainTanking
-Addon is still work in progress, but core features are implemented.
+BigBrainTanking is an addon that is aimed to assist you with tanking chores.
 
 ## Features
 * Automatic salvation removal
@@ -8,7 +8,7 @@ Addon is still work in progress, but core features are implemented.
   * Custom channels
   * Detailed announcements (hp lost after last stand, spell durations, target names with raid marks, etc)
 
-## Soon
+## Planned
 * Support for items (Lifegiving Gem, etc)
 * Tank adviser (dynamic tips based on theory crafting and your current stats/gear)
 
