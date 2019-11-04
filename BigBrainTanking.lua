@@ -282,7 +282,7 @@ local Default_Profile = {
 							}, 
 							Failed = { 
 								Enabled = true, 
-								L["ANNOUNCEMENT_SB_MISS"] ,
+								Text = L["ANNOUNCEMENT_SB_MISS"],
 								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
 							}, 
 						},
@@ -446,6 +446,22 @@ function BBT:SetAnnouncementActive(ability, announceVerb, presence, channel, sta
 	
 end
 
+
+function GetAnnounceText(info) 
+	announceVerb = info[#info-1] -- Activated/Hit/Failed/etc
+	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
+
+	return BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Text
+end
+
+
+function SetAnnounceText(info, value) 
+	nnounceVerb = info[#info-1] -- Activated/Hit/Failed/etc
+	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
+
+	BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Text = value
+end
+
 function GetAnnouncementSetting(keys, index) 
 	presenceType = keys[#keys] -- Alone/Party/Raid
 	announceVerb = keys[#keys-1] -- Activated/Hit/Failed/etc
@@ -470,6 +486,18 @@ function SetAnnouncementSetting(keys, index, state)
 	BBT:SetAnnouncementActive(keyName, announceVerb, presenceType, ChannelCheckbox, state)
 end
 
+function IsAnnounceEnabled(info)
+	announceVerb = info[#info-1] -- Activated/Hit/Failed/etc
+	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
+	return BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Enabled
+end
+
+function SetAnnounceEnabled(info, value)
+	announceVerb = info[#info-1] -- Activated/Hit/Failed/etc
+	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
+	BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Enabled = value
+end
+
 function BBT:GenerateAnnounceSettings(itemTable) 
 	local AnnounceSettingsTable = {}
 
@@ -492,10 +520,26 @@ function BBT:GenerateAnnounceSettings(itemTable)
 				width = "full",
 				childGroups = "tab",
 				args = {
+					IsEnabled = {
+						name = "Enabled",
+						type = "toggle",
+						order = 1,
+						tristate = false,
+						get = IsAnnounceEnabled,
+						set = SetAnnounceEnabled,						
+					},
+					Text = {
+						name = "Text",
+						type = "input",
+						order = 2,
+						width = "full",
+						get = GetAnnounceText,
+						set = SetAnnounceText
+					},
 					Alone = { 
 						name = "Alone",
 						type = "multiselect",
-						order = 1,
+						order = 3,
 						tristate = false,
 						values = BBT.AnnouncementChannels,
 						get = GetAnnouncementSetting,
@@ -504,7 +548,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 					Party = { 
 						name = "Party",
 						type = "multiselect",
-						order = 2,
+						order = 4,
 						tristate = false,
 						values = BBT.AnnouncementChannels,
 						get = GetAnnouncementSetting,
@@ -513,7 +557,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 					Raid = { 
 						name = "Raid",
 						type = "multiselect",
-						order = 3,
+						order = 5,
 						tristate = false,
 						values = BBT.AnnouncementChannels,
 						get = GetAnnouncementSetting,
@@ -681,6 +725,10 @@ function BBT:GetAbilityAnnounce(ability, announceVerb)
 		return nil
 	end
 	
+	if not Announce.Enabled then
+		return Announce.Text, nil -- No channels to announce to
+	end
+	
 	return Announce.Text, Announce.Channels[presence]
 end
 
@@ -795,10 +843,13 @@ function BBT:OnCombatLogEventUnfiltered()
 		--Failures
 		elseif subevent == "SPELL_MISSED" then		
 			--We COULD look for the 15th argument of ... here for the type, but we'll just declare any miss as "resisted"
-			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] or spellName == L["ABILITY_MOCKINGBLOW"] then
+			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] then
+				local message, channels = BBT:GetAbilityAnnounce(spellName, "Resisted")
+				self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
+			elseif spellName == L["ABILITY_MOCKINGBLOW"] then
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Failed")
 				self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
-			else 
+			else
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Failed")
 				if message ~= nil then
 					self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
