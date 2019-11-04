@@ -13,6 +13,8 @@ local playerClass, englishClass = UnitClass("player")
 BBT = LibStub("AceAddon-3.0"):NewAddon("BigBrainTanking", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
 BBT.Version = GetAddOnMetadata(addonName, 'Version')
 BBT.Author = GetAddOnMetadata(addonName, "Author") 
+BBT.Translators = GetAddOnMetadata(addonName, "X-Translators")
+BBT.Testers = GetAddOnMetadata(addonName, "X-Testers")
 BBT.DebugPrintEnabled = true
 
 BBT.AnnouncementChannels = {
@@ -115,8 +117,22 @@ BBT.Options = {
 								.."|cffff8c00"..BBT.Author,
 							cmdHidden = true
 						},
-						InspireByDesc = {
+						TranslatorsDesc = {
 							order = 3,
+							type = "description",
+							name = "|cffffd700"..L["ABOUT_TRANSLATORS"]..": "
+								.."|cffffffff"..BBT.Translators,
+							cmdHidden = true
+						},
+						TestersDesc = {
+							order = 4,
+							type = "description",
+							name = "|cffffd700"..L["ABOUT_TESTERS"]..": "
+								.."|cffffffff"..BBT.Testers,
+							cmdHidden = true
+						},
+						InspireByDesc = {
+							order = 5,
 							type = "description",
 							name = "|cffffd700"..L["INSPIRED_BY"]..": "
 								.."|cffffffffTankWarningsClassic, NoSalv (benjen), TankBuddy, SimpleInterruptAnnounce",

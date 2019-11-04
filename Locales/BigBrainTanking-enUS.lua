@@ -47,6 +47,8 @@ L["OnDescription"] = "Enables addon."
 L["OffDescription"] = "Disables addon."
 L["ABOUT_VERSION"] = "Version"
 L["ABOUT_AUTHOR"] = "Author"
+L["ABOUT_TRANSLATORS"] = "Translators"
+L["ABOUT_TESTERS"] = "Testers"
 
 -- Salvation 
 L["EnableBBTSalvRemoval"] = "Enable Salvation removal"
