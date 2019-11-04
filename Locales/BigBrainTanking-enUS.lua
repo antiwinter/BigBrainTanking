@@ -29,6 +29,9 @@ Addon is able to automatically remove Blessing of Salvation (-30% threat buff) f
 |cffffd000Warnings|cffffffff
 You can setup warnings whenever your key abilities get resisted or missed, when you interrupt spell cast or activate an ability/item. Check out warning settings subcategory in addon's options. 
 ]]
+L["DebugSettings"] = "Debug Settings"
+L["DebugDescription"] = "|cfff00000These are debug settings for the developer, do NOT change them unless you know what you are doing."
+L["EnableDebugPrint"] = "Enable debug printing"
 
 L["INSPIRED_BY"] = "Inspired by"
 

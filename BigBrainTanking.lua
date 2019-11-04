@@ -141,7 +141,34 @@ BBT.Options = {
 				-- order = 6 filled with Item specific settings (Lifegiving Gem, etc)
 			}
 		},
-		
+		DebugSettings = {
+			name = L["DebugSettings"],
+			desc = L["DebugSettings"],
+			type = "group",
+			order = 3,
+			args = {
+				Description = {
+					name = L["DebugDescription"],
+					type = "description",
+					order = 1,
+				},
+				Enabled = {
+					name = L["EnableDebugPrint"],
+					desc = L["EnableDebugPrint"],
+					type = "toggle",
+					order = 2,
+					width = "full",
+					get = function(info)
+						return BBT.DebugPrintEnabled
+					end,
+					set = function(info, value)
+						BBT.DebugPrintEnabled = value
+					end,
+				},
+				
+				
+			},
+		},
 	},
 }
 
@@ -392,6 +419,14 @@ function BBT:OnInitialize()
 	self:Print("Initializing finished!")
 end
 
+function BBT:GetClassAbilitiesDefaultTable() 
+	if englishClass == "WARRIOR" then
+		return Default_Profile.profile.Warnings.Abilities.Warrior
+	elseif englishClass == "DRUID" then
+		return Default_Profile.profile.Warnings.Abilities.Druid
+	end
+end
+
 function BBT:GetClassAbilitiesTable() 
 	if englishClass == "WARRIOR" then
 		return BBT.db.profile.Warnings.Abilities.Warrior
@@ -448,18 +483,25 @@ end
 
 
 function GetAnnounceText(info) 
-	announceVerb = info[#info-1] -- Activated/Hit/Failed/etc
-	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
+	announceVerb = info[#info-2] -- Activated/Hit/Failed/etc
+	ability = info[#info-3] -- Pummel/Life Giving Gem/etc
 
 	return BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Text
 end
 
 
 function SetAnnounceText(info, value) 
-	nnounceVerb = info[#info-1] -- Activated/Hit/Failed/etc
-	ability = info[#info-2] -- Pummel/Life Giving Gem/etc
+	nnounceVerb = info[#info-2] -- Activated/Hit/Failed/etc
+	ability = info[#info-3] -- Pummel/Life Giving Gem/etc
 
 	BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Text = value
+end
+
+function ResetAnnounceText(info) 
+	nnounceVerb = info[#info-2] -- Activated/Hit/Failed/etc
+	ability = info[#info-3] -- Pummel/Life Giving Gem/etc
+
+	BBT:GetClassAbilitiesTable()[ability].Announce[announceVerb].Text = BBT:GetClassAbilitiesDefaultTable()[ability].Announce[announceVerb].Text
 end
 
 function GetAnnouncementSetting(keys, index) 
@@ -509,6 +551,7 @@ function BBT:GenerateAnnounceSettings(itemTable)
 			order = #AnnounceSettingsTable+1,
 			width = "full",
 			icon = value.Icon, 
+			childGroups = "tab",
 			args = {},
 		}
 		
@@ -518,7 +561,6 @@ function BBT:GenerateAnnounceSettings(itemTable)
 				desc = key,
 				type = "group",
 				width = "full",
-				childGroups = "tab",
 				args = {
 					IsEnabled = {
 						name = "Enabled",
@@ -528,13 +570,29 @@ function BBT:GenerateAnnounceSettings(itemTable)
 						get = IsAnnounceEnabled,
 						set = SetAnnounceEnabled,						
 					},
-					Text = {
-						name = "Text",
-						type = "input",
-						order = 2,
+					TextGrp = {
+						name = "Announcement text",
+						type = "group",
 						width = "full",
-						get = GetAnnounceText,
-						set = SetAnnounceText
+						inline = true,
+						order = 2,
+						args = {
+							Text = {
+								name = "Message",
+								type = "input",
+								order = 1,
+								width = "full",
+								get = GetAnnounceText,
+								set = SetAnnounceText
+							},
+							ResetText = {
+								name = "Reset",
+								type = "execute",
+								width = "full",
+								order = 2,
+								func = ResetAnnounceText,						
+							},
+						},
 					},
 					Alone = { 
 						name = "Alone",
@@ -620,6 +678,7 @@ function BBT:SetupOptions()
 	
 	self.OptionsFrames.BBT = ACD3:AddToBlizOptions("BigBrainTanking", L["BBT Option"], nil, "General")
 	self.OptionsFrames.WarningSettings = ACD3:AddToBlizOptions("BigBrainTanking", L["WarningSettings"], L["BBT Option"], "WarningSettings")
+	self.OptionsFrames.WarningSettings = ACD3:AddToBlizOptions("BigBrainTanking", L["DebugSettings"], L["BBT Option"], "DebugSettings")
 	self:RegisterModuleOptions("Profiles", LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db), L["Profiles"])
 end
 
