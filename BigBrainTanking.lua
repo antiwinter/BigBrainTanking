@@ -749,7 +749,7 @@ function BBT:CancelSalvBuff()
 end
 
 function BBT:OnUnitAuraEvent(eventName, unitTarget)
-	self:PrintDebug(string.format("OnUnitAuraEvent, untitTarget: %s", unitTarget))
+	--self:PrintDebug(string.format("OnUnitAuraEvent, untitTarget: %s", unitTarget))
 
 	if self:IsSalvRemovalEnabled() and unitTarget == "player" then
 		self:CancelSalvBuff()
@@ -862,8 +862,10 @@ function BBT:OnBuffExpiration(spellName, warnSecBeforeExpire)
 
 	if UnitIsDeadOrGhost("player") ~= true then
 		local message, channels = BBT:GetAbilityAnnounce(spellName, "Expiration")
+		message = string.gsub(message, "$sn", spellName)
+		message = string.gsub(message, "$se", warnSecBeforeExpire)
 	
-		self:SendWarningMessage(string.format(message, spellName, warnSecBeforeExpire), channels)
+		self:SendWarningMessage(message, channels)
 	end
 end
 
@@ -873,6 +875,18 @@ function BBT:PrintDebug(...)
 	end
 
 	self:Print(...)
+end
+
+function BBT:GetBuffDuration(spellName)
+	local counter = 1
+	while UnitBuff("player", counter) do
+		local buffName, icon, count, debuffType, buffDuration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId  = UnitBuff("player", counter) 
+		
+		if buffName == spellName then
+			return buffDuration
+		end
+		counter = counter + 1
+	end
 end
 
 function BBT:OnCombatLogEventUnfiltered() 
@@ -892,8 +906,11 @@ function BBT:OnCombatLogEventUnfiltered()
 		if subevent == 'SPELL_INTERRUPT' then 
 			self:PrintDebug(string.format("Spell interrupt (dest: %s, spellname: %s, extraSpellName: %s)", destName, spellName, extraSpellName))
 			
-			local message, channels = BBT:GetAbilityAnnounce(spellName, "Hit")
-			message = string.format(message, destEntityName, extraSpellName, spellName)
+			local message, channels = BBT:GetAbilityAnnounce(spellName, "Hit")			
+			message = string.gsub(message, "$tn", destEntityName)
+			message = string.gsub(message, "$is", extraSpellName)
+			message = string.gsub(message, "$sn", spellName)
+			
 			self:PrintDebug(string.format("MSG: %s", message))
 			
 			self:SendWarningMessage(message, channels)
@@ -902,34 +919,45 @@ function BBT:OnCombatLogEventUnfiltered()
 		elseif subevent == "SPELL_CAST_SUCCESS" then
 			--Casts with critical expirations
 			if spellName == L["ABILITY_LASTSTAND"] or spellName == L["ABILITY_SHIELDWALL"] then
+				local spellDuration = BBT:GetBuffDuration(spellName)
+				
+				-- expiration timer
+				local warnSecBeforeExpire = 3
+				local timeToWarn = spellDuration - warnSecBeforeExpire
+			
+				self:PrintDebug(string.format("Scheduling buff expiration timer %f (spellDuration: %f)", timeToWarn, spellDuration))
+				BBT.BuffTimers[spellName] = self:ScheduleTimer(self.OnBuffExpiration, timeToWarn, self,  spellName, warnSecBeforeExpire)
+				
+				-- message
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Activated")
-				message = string.format(message, spellName)
+				message = string.gsub(message, "$sn", spellName)
+				message = string.gsub(message, "$sd", spellDuration)
+				
+				if spellName == L["ABILITY_LASTSTAND"] then
+					message = string.gsub(message, "$lshp", math.floor((UnitHealthMax("player")/130)*30))
+				end
+				
 				self:PrintDebug(string.format("MSG: %s", message))
 			
 				self:SendWarningMessage(message, channels)
-				
-				-- find buff, get its duration and set up a timer
-				local counter = 1
-				while UnitBuff("player", counter) do
-					local buffName, icon, count, debuffType, buffDuration, expirationTime, unitCaster, isStealable, shouldConsolidate, spellId  = UnitBuff("player", counter) 
-					
-					if buffName == spellName then
-						local warnSecBeforeExpire = 3
-						local timeToWarn = buffDuration - warnSecBeforeExpire
-						
-						self:PrintDebug(string.format("Scheduling buff expiration timer %f (buffDuration: %f)", timeToWarn, buffDuration))
-						BBT.BuffTimers[spellName] = self:ScheduleTimer(self.OnBuffExpiration, timeToWarn, self,  spellName, warnSecBeforeExpire)
-						break
-					end
-					counter = counter + 1
-				end
 			
 			--Casts without critical expirations
 			elseif spellName == L["ABILITY_CHALLENGINGSHOUT"] or spellName == L["ABILITY_CHALLENGINGROAR"] then
+				local spellDuration = BBT:GetBuffDuration(spellName)
+				
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Activated")
+				message = string.gsub(message, "$sn", spellName)
+				
+				-- TODO: MIGHT NOT WORK, NEED TO GET IT SOMEWHERE ELSE
+				if spellDuration ~= nil then
+					message = string.gsub(message, "$sd", spellDuration)
+				end
+				
 				self:SendWarningMessage(string.format(message, spellName), channels)
 			elseif spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] then
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Hit")
+				message = string.gsub(message, "$tn", destEntityName)
+				
 				self:SendWarningMessage(string.format(message, spellName), channels)
 			end
 		--Failures
@@ -937,14 +965,17 @@ function BBT:OnCombatLogEventUnfiltered()
 			--We COULD look for the 15th argument of ... here for the type, but we'll just declare any miss as "resisted"
 			if spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] then
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Resisted")
-				self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
-			elseif spellName == L["ABILITY_MOCKINGBLOW"] then
-				local message, channels = BBT:GetAbilityAnnounce(spellName, "Failed")
-				self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
-			else
+				message = string.gsub(message, "$tn", destEntityName)
+				message = string.gsub(message, "$sn", spellName)
+				
+				self:SendWarningMessage(message, channels)
+			else -- Mocking Blow, Pummel, Shield Bash, etc
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Failed")
 				if message ~= nil then
-					self:SendWarningMessage(string.format(message, destEntityName, spellName), channels)
+					message = string.gsub(message, "$tn", destEntityName)
+					message = string.gsub(message, "$sn", spellName)
+				
+					self:SendWarningMessage(message, channels)
 				end
 			end
 		end

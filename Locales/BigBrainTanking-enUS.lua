@@ -88,25 +88,36 @@ L["ABILITY_PUMMEL"] = "Pummel"
 --- Items
 L["ITEM_LIFEGIVINGGEM"] = "Lifegiving Gem"
 
+
+--[[ 
+	Special characters:
+	
+	$tn - target name (including mark)
+	$sn - spell name
+	$is - interrupted spell
+	$sd - spell duration in seconds
+	$lshp - last stand hp gained
+--]]
+
 --- Statuses
-L["ABILITY_ACTIVATED"] = "%s activated!"
-L["ABILITY_RESISTED"] = "%s resisted %s!" -- "Core Hound {skull} resisted Taunt!"
-L["ABILITY_EXPIRATION"] = "%s will expire in %s seconds!"
-L["ABILITY_INTERRUPT"] = "%s's -%s- was interrupted by %s!"
+--L["ABILITY_ACTIVATED"] = "$sn activated!"
+--L["ABILITY_RESISTED"] = "$tn resisted $sn!" -- "Core Hound {skull} resisted Taunt!"
+L["ABILITY_EXPIRATION"] = "$sn will expire in $se seconds!"
+--L["ABILITY_INTERRUPT"] = "$tn's -$is- was interrupted by $sn!"
 
 -- Announcments
 L["ANNOUNCEMENT_TAUNT_HIT"] = "- Taunted $tn! - "
-L["ANNOUNCEMENT_TAUNT_RESIST"] = "- My Taunt has been resisted by $tn! -";
-L["ANNOUNCEMENT_MB_HIT"] = "- Used Mocking Blow against $tn! -";
-L["ANNOUNCEMENT_MB_FAIL"] = "- My Mocking Blow failed against $tn! -";
-L["ANNOUNCEMENT_PM_HIT"] = "Pummel interrupted $tn!";
-L["ANNOUNCEMENT_PM_MISS"] = "Pummel missed against $tn!";
-L["ANNOUNCEMENT_SB_HIT"] = "Shield Bash interrupted $tn!";
-L["ANNOUNCEMENT_SB_MISS"] = "Shield Bash missed against $tn!";
-L["ANNOUNCEMENT_LS_ACTIVATION"] = "- I activated Last Stand! In $sec seconds I will lose $hpHP! -";
-L["ANNOUNCEMENT_SW_ACTIVATION"] = "- I activated Shield Wall and will be taking 75%% less damage for $sec seconds! -";
-L["ANNOUNCEMENT_LG_ACTIVATION"] = "- I activated Lifegiving Gem! In $sec seconds I will lose $hpHP! -";
-L["ANNOUNCEMENT_CS_ACTIVATION"] = "- I activated Challenging Shout! I will need a lot of healing for $sec seconds! -";
-L["ANNOUNCEMENT_GROWL_RESIST"] = "- My Growl has been resisted by $tn! -";
-L["ANNOUNCEMENT_CR_ACTIVATION"] = "- I activated Challenging Roar! I will need a lot of healing for $sec seconds! -";
+L["ANNOUNCEMENT_TAUNT_RESIST"] = "- $tn resisted $sn! -";
+L["ANNOUNCEMENT_MB_HIT"] = "- Used $sn against $tn! -";
+L["ANNOUNCEMENT_MB_FAIL"] = "- My $sn failed against $tn! -";
+L["ANNOUNCEMENT_PM_HIT"] = "$tn's -$is- was interrupted by $sn!";
+L["ANNOUNCEMENT_PM_MISS"] = "$sn missed against $tn!";
+L["ANNOUNCEMENT_SB_HIT"] = "$tn's -$is- was interrupted by $sn!";
+L["ANNOUNCEMENT_SB_MISS"] = "$sn missed against $tn!";
+L["ANNOUNCEMENT_LS_ACTIVATION"] = "- I activated $sn! In $sd seconds I will lose $lshpHP! -";
+L["ANNOUNCEMENT_SW_ACTIVATION"] = "- I activated $sn and will be taking 75% less damage for $sd seconds! -";
+L["ANNOUNCEMENT_LG_ACTIVATION"] = "- I activated Lifegiving Gem! In $sd seconds I will lose $hpHP! -";
+L["ANNOUNCEMENT_CS_ACTIVATION"] = "- I activated $sn! I will need a lot of healing for $sd seconds! -";
+L["ANNOUNCEMENT_GROWL_RESIST"] = "- $tn resisted $sn! -";
+L["ANNOUNCEMENT_CR_ACTIVATION"] = "- I activated $sn! I will need a lot of healing for $sd seconds! -";
 
