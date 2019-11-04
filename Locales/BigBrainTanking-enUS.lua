@@ -61,6 +61,7 @@ L["SalvRemovalDisabled"] = "[BBT] Salvation removal disabled!"
 L["SalvBuffName"] = "Blessing of Salvation"
 
 -- Warnings
+L["WS_CUSTOM_CHANNELS_DESC"] = "Enter comma separated channel names. (Example: channel1, channel2, channel3)"
 L["WS_ABILITIES"] = "Abilities"
 L["WS_ITEMS"] = "Items"
 L["WS_CUSTOM_CHANNELS"] = "Custom channels"

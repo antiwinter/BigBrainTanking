@@ -152,6 +152,7 @@ BBT.Options = {
 				},
 				WarningsCustomChannels = {
 					name = L["WS_CUSTOM_CHANNELS"],
+					desc = L["WS_CUSTOM_CHANNELS_DESC"],
 					type = "input",
 					order = 3,
 					width = "full",
