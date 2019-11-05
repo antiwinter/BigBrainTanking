@@ -15,7 +15,7 @@ BBT.Version = GetAddOnMetadata(addonName, 'Version')
 BBT.Author = GetAddOnMetadata(addonName, "Author") 
 BBT.Translators = GetAddOnMetadata(addonName, "X-Translators")
 BBT.Testers = GetAddOnMetadata(addonName, "X-Testers")
-BBT.DebugPrintEnabled = true
+BBT.DebugPrintEnabled = false
 
 BBT.AnnouncementChannels = {
 	"say", "yell", "party", "raid", "raid_warning" 
