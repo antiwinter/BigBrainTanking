@@ -286,12 +286,12 @@ local Default_Profile = {
 							Activated = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_LS_ACTIVATION"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },
 							}, 
 							Expiration = { 
 								Enabled = true, 
 								Text = L["ABILITY_EXPIRATION"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },
 							},	
 						},
 					},
@@ -301,12 +301,12 @@ local Default_Profile = {
 							Activated = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_SW_ACTIVATION"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },
 							},
 							Expiration = { 
 								Enabled = true, 
 								Text = L["ABILITY_EXPIRATION"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },
 							},	
 						},
 					},
@@ -316,7 +316,7 @@ local Default_Profile = {
 							Activated = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_CS_ACTIVATION"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },
 							},		
 						},					
 					},
@@ -324,14 +324,14 @@ local Default_Profile = {
 						Icon = "Interface\\Icons\\Spell_Nature_Reincarnation", 
 						Announce = { 
 							Hit = { 
-								Enabled = true, 
+								Enabled = false, 
 								Text = L["ANNOUNCEMENT_TAUNT_HIT"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },					
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },					
 							},
 							Resisted = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_TAUNT_RESIST"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },					
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },					
 							},
 						},
 					},
@@ -341,12 +341,12 @@ local Default_Profile = {
 							Hit = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_MB_HIT"], 
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } } 
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } } 
 							},
 							Failed = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_MB_FAIL"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } }
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } }
 							},
 						},
 					},
@@ -356,12 +356,12 @@ local Default_Profile = {
 							Hit = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_SB_HIT"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "say", "raid" } },	
 							}, 
 							Failed = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_SB_MISS"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "say", "raid" } },	
 							}, 
 						},
 					},
@@ -371,12 +371,12 @@ local Default_Profile = {
 							Hit = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_PM_HIT"], 
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	 
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "say", "raid" } },	 
 							}, 
 							Failed = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_PM_MISS"], 
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "say", "raid" } },	
 							},					
 						},
 					},
@@ -388,7 +388,7 @@ local Default_Profile = {
 							Activated = {
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_CR_ACTIVATION"], 
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },	
 							},
 						},
 					},
@@ -398,12 +398,12 @@ local Default_Profile = {
 							Hit = { 
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_TAUNT_HIT"],
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },					
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },					
 							},
 							Activated = {
 								Enabled = true, 
 								Text = L["ANNOUNCEMENT_GROWL_RESIST"], 
-								Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+								Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },	
 							},
 						},
 					},
@@ -416,7 +416,7 @@ local Default_Profile = {
 						Activated = {
 							Enabled = true, 
 							Text = L["ANNOUNCEMENT_LG_ACTIVATION"], 
-							Channels = { Alone = { "yell" }, Party = { "yell", "party" }, Raid = { "raid_warning" } },	
+							Channels = { Alone = { }, Party = { "party" }, Raid = { "raid" } },	
 						},
 					},
 				},
