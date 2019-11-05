@@ -27,7 +27,9 @@ L["BBTDescriptionFooter"] = [[
 |cffffd000自动技能警报|cffffffff
 你可以设置警告,每当你的关键技能被抵制或miss时,或者当你使用打断技能或激活一个技能/物品时
 ]]
-
+L["DebugSettings"] = "调试设置"
+L["DebugDescription"] = "|cfff00000这些是开发人员的调试设置，除非你知道要做什么，否则不要更改它们"
+L["EnableDebugPrint"] = "启用调试打印"
 L["INSPIRED_BY"] = "Inspired by"
 
 L["On"] = "On"
@@ -37,16 +39,19 @@ L["SlashCommand"] = "Slash Command"
 
 -- General
 L["EnableBBT"] = "启用 BigBrainTanking"
-L["EnableBBTDescription"] = "启用/禁用 BigBrainTanking"
-L["OnDescription"] = "启用插件"
-L["OffDescription"] = "禁用插件"
-L["ABOUT_VERSION"] = "Version"
-L["ABOUT_AUTHOR"] = "Author"
+L["EnableBBTDescription"] = "启用或禁用 BigBrainTanking 插件"
+L["OnDescription"] = "启用插件."
+L["OffDescription"] = "禁用插件."
+L["ABOUT_VERSION"] = "版本"
+L["ABOUT_AUTHOR"] = "作者"
+L["ABOUT_TRANSLATORS"] = "翻译"
+L["ABOUT_TESTERS"] = "测试者"
 
 -- Salvation 
 L["EnableBBTSalvRemoval"] = "启用 拯救移除"
 L["EnableBBTSalvRemovalDescription"] = "启用或禁用自动拯救移除功能"
 L["SalvRemoved"] = "[BBT] 拯救已移除!"
+L["SalvLock"] = "[BBT] cfff00000警告：在战斗中拯救祝福不能被移除!"
 L["SalvRemovalOnDescription"] = "启用 拯救移除"
 L["SalvRemovalOffDescription"] = "禁用 拯救移除"
 L["SalvationCommand"] = "启用/禁用 自动拯救移除"
@@ -55,6 +60,24 @@ L["SalvRemovalDisabled"] = "[BBT] 自动拯救移除已禁用!"
 L["SalvBuffName"] = "拯救祝福"
 
 -- Warnings
+L["WS_CUSTOM_CHANNELS_DESC"] = "输入逗号分隔的频道名称。 (如: 频道1, 频道2, 频道3)"
+L["WS_ABILITIES"] = "技能"
+L["WS_ITEMS"] = "物品"
+L["WS_CUSTOM_CHANNELS"] = "自定义频道"
+L["ANNOUNCEMENT_TEXT"] = "通告文本"
+L["ANNOUNCEMENT_TEXT_MESSAGE"] = "消息"
+L["ANNOUNCEMENT_TEXT_DESCRIPTION"] = [[
+
+|cffffd000特殊符号|cffffffff
+公告文本中可以包含特殊符号：
+
+$tn - 目标名字 (包括raid标记)
+$sn - 法术名字
+$is - 被打断的法术名
+$sd - 法术持续时间(秒)
+$lshp - 破斧获得的血量
+]]
+
 L["AnnouncementSetup"] = "通告设置"
 L["WarningSettings"] = "警报设置"
 L["WarningSettingsDescription"] = [[
@@ -82,23 +105,34 @@ L["ABILITY_PUMMEL"] = "拳击"
 --- Items
 L["ITEM_LIFEGIVINGGEM"] = "生命宝石"
 
+--[[ 
+	Special text:
+	
+	$tn - target name (including mark)
+	$sn - spell name
+	$is - interrupted spell
+	$sd - spell duration in seconds
+	$lshp - last stand hp gained
+--]]
+
 --- Statuses
-L["ABILITY_ACTIVATED"] = "%s 已激活! 加好我!"
-L["ABILITY_RESISTED"] = "%s 被抵抗!"
-L["ABILITY_EXPIRATION"] = "%s 将在 %s 秒后过期!"
-L["ABILITY_INTERRUPT"] = "%s 的 -%s- 被 %s 打断了!"
+--L["ABILITY_ACTIVATED"] = "$sn activated!"
+--L["ABILITY_RESISTED"] = "$tn resisted $sn!" -- "Core Hound {skull} resisted Taunt!"
+L["ABILITY_EXPIRATION"] = "$sn 会在 $se 后消失!"
+--L["ABILITY_INTERRUPT"] = "$tn's -$is- was interrupted by $sn!"
 
 -- Announcments
-L["ANNOUNCEMENT_TAUNT_RESIST"] = "- 我的嘲讽被 $tn! 抵抗了! -";
-L["ANNOUNCEMENT_MB_FAIL"] = "- 我的惩戒痛击未击中 $tn! -";
-L["ANNOUNCEMENT_PM_HIT"] = "使用拳击打断了 $tn!";
-L["ANNOUNCEMENT_PM_MISS"] = "拳击未命中!";
-L["ANNOUNCEMENT_SB_HIT"] = "使用盾击打断了 $tn!";
-L["ANNOUNCEMENT_SB_MISS"] = "盾击未命中!";
-L["ANNOUNCEMENT_LS_ACTIVATION"] = "- 我激活了破釜沉舟! $sec 秒内我将损失 $hpHP! 加好我! -";
-L["ANNOUNCEMENT_SW_ACTIVATION"] = "- 我激活了盾墙! $sec 秒内我将降低75%的伤害! -";
-L["ANNOUNCEMENT_LG_ACTIVATION"] = "- 我激活了生命宝石! $sec 秒内我将损失 $hpHP! 加好我! -";
-L["ANNOUNCEMENT_CS_ACTIVATION"] = "- 我使用了挑战怒吼! $sec 秒内我将大出血! 加好我! -";
-L["ANNOUNCEMENT_GROWL_RESIST"] = "- 我的低吼被 $tn 抵抗了! -";
-L["ANNOUNCEMENT_CR_ACTIVATION"] = "- 我使用了挑战咆哮! $sec 秒内我将大出血! 加好我! -";
-
+L["ANNOUNCEMENT_TAUNT_HIT"] = "- 已嘲讽 $tn! - "
+L["ANNOUNCEMENT_TAUNT_RESIST"] = "- $tn 抵抗了我的 $sn! -";
+L["ANNOUNCEMENT_MB_HIT"] = "- 对 $sn 施放了 $tn! -";
+L["ANNOUNCEMENT_MB_FAIL"] = "- 我的 $sn 对 $tn 施放失败! -";
+L["ANNOUNCEMENT_PM_HIT"] = "$tn 的 -$is- 被 $sn 打断了!";
+L["ANNOUNCEMENT_PM_MISS"] = "$sn 未命中 $tn!";
+L["ANNOUNCEMENT_SB_HIT"] = "$tn 的 -$is- 被 $sn 打断了!!";
+L["ANNOUNCEMENT_SB_MISS"] = "$sn 未命中 $tn!";
+L["ANNOUNCEMENT_LS_ACTIVATION"] = "- 我激活了 $sn! $sd 秒后我会失去 $lshpHP! 加好我!-";
+L["ANNOUNCEMENT_SW_ACTIVATION"] = "- 我激活了 $sn! $sd 秒内会降低75%的所有伤害! -";
+L["ANNOUNCEMENT_LG_ACTIVATION"] = "- 我激活了生命宝石! $sd 秒后我会失去 $hpHP! 加好我!-";
+L["ANNOUNCEMENT_CS_ACTIVATION"] = "- 我激活了 $sn! $sd 秒内我将大出血! 加好我!-";
+L["ANNOUNCEMENT_GROWL_RESIST"] = "- $tn 抵抗了 $sn! -";
+L["ANNOUNCEMENT_CR_ACTIVATION"] = "- 我激活了 $sn! $sd 秒内我将大出血! 加好我!-";
