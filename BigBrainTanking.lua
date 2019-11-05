@@ -1022,7 +1022,7 @@ function BBT:OnCombatLogEventUnfiltered()
 				message = string.gsub(message, "$sn", spellName)
 				message = string.gsub(message, "$sd", spellDuration)
 				
-				self:SendWarningMessage(string.format(message, spellName), channels)
+				self:SendWarningMessage(message, channels)
 			elseif spellName == L["ABILITY_TAUNT"] or spellName == L["ABILITY_GROWL"] then
 				local message, channels = BBT:GetAbilityAnnounce(spellName, "Hit")
 				message = string.gsub(message, "$tn", destEntityName)
