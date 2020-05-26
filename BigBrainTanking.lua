@@ -850,7 +850,8 @@ function BBT:GetAbilityAnnounce(ability, announceVerb)
 
 	BBT:PrintDebug(string.format("BBT:GetAbilityAnnounce(ability: %s, announceVerb: %s)", ability, announceVerb))
 	
-	local AbilityAnnounce = BBT:GetClassAbilitiesTable()[ability]
+	local _a, AbilityAnnounce = BBT:GetClassAbilitiesTable()
+	AbilityAnnounce = _a and _a[ability]
 
 	if AbilityAnnounce == nil then
 		BBT:PrintDebug(string.format("Invalid ability %s", ability))
