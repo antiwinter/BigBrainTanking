@@ -28,7 +28,8 @@ L["BBTDescriptionFooter"] = [[
 你可以设置警告,每当你的关键技能被抵制或miss时,或者当你使用打断技能或激活一个技能/物品时
 ]]
 L["DebugSettings"] = "调试设置"
-L["DebugDescription"] = "|cfff00000这些是开发人员的调试设置，除非你知道要做什么，否则不要更改它们"
+L["DebugDescription"] =
+    "|cfff00000这些是开发人员的调试设置，除非你知道要做什么，否则不要更改它们"
 L["EnableDebugPrint"] = "启用调试打印"
 L["INSPIRED_BY"] = "Inspired by"
 
@@ -51,7 +52,8 @@ L["ABOUT_TESTERS"] = "测试者"
 L["EnableBBTSalvRemoval"] = "启用 拯救移除"
 L["EnableBBTSalvRemovalDescription"] = "启用或禁用自动拯救移除功能"
 L["SalvRemoved"] = "[BBT] 拯救已移除!"
-L["SalvLock"] = "[BBT] cfff00000警告：在战斗中拯救祝福不能被移除!"
+L["SalvLock"] =
+    "[BBT] |cfff00000警告：在战斗中拯救祝福不能被移除!"
 L["SalvRemovalOnDescription"] = "启用 拯救移除"
 L["SalvRemovalOffDescription"] = "禁用 拯救移除"
 L["SalvationCommand"] = "启用/禁用 自动拯救移除"
@@ -60,7 +62,8 @@ L["SalvRemovalDisabled"] = "[BBT] 自动拯救移除已禁用!"
 L["SalvBuffName"] = "拯救祝福"
 
 -- Warnings
-L["WS_CUSTOM_CHANNELS_DESC"] = "输入逗号分隔的频道名称。 (如: 频道1, 频道2, 频道3)"
+L["WS_CUSTOM_CHANNELS_DESC"] =
+    "输入逗号分隔的频道名称。 (如: 频道1, 频道2, 频道3)"
 L["WS_ABILITIES"] = "技能"
 L["WS_ITEMS"] = "物品"
 L["WS_CUSTOM_CHANNELS"] = "自定义频道"
@@ -84,11 +87,12 @@ L["WarningSettingsDescription"] = [[
 控制是否以及如何显示警告
 ]]
 L["EnableBBTWarnings"] = "启用 警报"
-L["EnableBBTWarningsDescription"] = "启用或禁用关于嘲讽抵抗、惩戒痛击未命中等的警告"
+L["EnableBBTWarningsDescription"] =
+    "启用或禁用关于嘲讽抵抗、惩戒痛击未命中等的警告"
 
 L["EnableBBTWarningsExpiration"] = "启用 过期警告"
-L["EnableBBTWarningsExpirationDescription"] = "启用或禁用有关盾墙墙和破釜沉舟的过期警告通知"
-
+L["EnableBBTWarningsExpirationDescription"] =
+    "启用或禁用有关盾墙墙和破釜沉舟的过期警告通知"
 
 L["ABILITY_LASTSTAND"] = "破釜沉舟"
 L["ABILITY_SHIELDWALL"] = "盾墙"
@@ -116,10 +120,10 @@ L["ITEM_LIFEGIVINGGEM"] = "生命宝石"
 --]]
 
 --- Statuses
---L["ABILITY_ACTIVATED"] = "$sn activated!"
---L["ABILITY_RESISTED"] = "$tn resisted $sn!" -- "Core Hound {skull} resisted Taunt!"
+-- L["ABILITY_ACTIVATED"] = "$sn activated!"
+-- L["ABILITY_RESISTED"] = "$tn resisted $sn!" -- "Core Hound {skull} resisted Taunt!"
 L["ABILITY_EXPIRATION"] = "$sn 会在 $se 后消失!"
---L["ABILITY_INTERRUPT"] = "$tn's -$is- was interrupted by $sn!"
+-- L["ABILITY_INTERRUPT"] = "$tn's -$is- was interrupted by $sn!"
 
 -- Announcments
 L["ANNOUNCEMENT_TAUNT_HIT"] = "- 已嘲讽 $tn! - "
@@ -130,9 +134,14 @@ L["ANNOUNCEMENT_PM_HIT"] = "$tn 的 -$is- 被 $sn 打断了!";
 L["ANNOUNCEMENT_PM_MISS"] = "$sn 未命中 $tn!";
 L["ANNOUNCEMENT_SB_HIT"] = "$tn 的 -$is- 被 $sn 打断了!!";
 L["ANNOUNCEMENT_SB_MISS"] = "$sn 未命中 $tn!";
-L["ANNOUNCEMENT_LS_ACTIVATION"] = "- 我激活了 $sn! $sd 秒后我会失去 $lshpHP! 加好我!-";
-L["ANNOUNCEMENT_SW_ACTIVATION"] = "- 我激活了 $sn! $sd 秒内会降低75%的所有伤害! -";
-L["ANNOUNCEMENT_LG_ACTIVATION"] = "- 我激活了生命宝石! $sd 秒后我会失去 $hpHP! 加好我!-";
-L["ANNOUNCEMENT_CS_ACTIVATION"] = "- 我激活了 $sn! $sd 秒内我将大出血! 加好我!-";
+L["ANNOUNCEMENT_LS_ACTIVATION"] =
+    "- 我激活了 $sn! $sd 秒后我会失去 $lshpHP! 加好我!-";
+L["ANNOUNCEMENT_SW_ACTIVATION"] =
+    "- 我激活了 $sn! $sd 秒内会降低75%的所有伤害! -";
+L["ANNOUNCEMENT_LG_ACTIVATION"] =
+    "- 我激活了生命宝石! $sd 秒后我会失去 $hpHP! 加好我!-";
+L["ANNOUNCEMENT_CS_ACTIVATION"] =
+    "- 我激活了 $sn! $sd 秒内我将大出血! 加好我!-";
 L["ANNOUNCEMENT_GROWL_RESIST"] = "- $tn 抵抗了 $sn! -";
-L["ANNOUNCEMENT_CR_ACTIVATION"] = "- 我激活了 $sn! $sd 秒内我将大出血! 加好我!-";
+L["ANNOUNCEMENT_CR_ACTIVATION"] =
+    "- 我激活了 $sn! $sd 秒内我将大出血! 加好我!-";
